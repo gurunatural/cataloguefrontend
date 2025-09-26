@@ -216,7 +216,6 @@
     </style>
 </head>
 <body class="text-gray-800">
-    <!-- Loading Indicator -->
     <div id="loading-indicator" class="fixed inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50">
         <div class="loading-dots flex gap-2">
             <span class="w-3 h-6 bg-gray-300 rounded-full"></span>
@@ -226,17 +225,14 @@
     </div>
 
     <div id="store-page" class="hidden">
-        <!-- Top Bar -->
         <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-40 shadow-sm">
             <nav class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
-                <!-- Left: Search Icon -->
                 <div class="flex-1 flex justify-start">
                     <svg id="search-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </div>
 
-                <!-- Center: Title / Search Input -->
                 <div class="flex-1 text-center">
                      <a href="#" id="store-title" class="font-serif text-2xl sm:text-3xl font-bold text-[#4A6C4A] transition-opacity duration-300">
                          Guru Sampoorna
@@ -244,7 +240,6 @@
                      <input type="text" id="search-input" class="w-full max-w-xs sm:max-w-sm hidden border-gray-300 rounded-full px-4 py-1.5 focus:ring-2 focus:ring-[#86A873] focus:border-[#86A873] transition-all duration-300" placeholder="Search for products...">
                 </div>
 
-                <!-- Right: Cart -->
                 <div class="flex-1 flex justify-end">
                     <button id="cart-icon-btn" class="flex items-center space-x-2 cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -260,19 +255,15 @@
         </header>
 
         <main class="container mx-auto px-6 py-8">
-            <!-- Product Categories -->
             <section id="categories-section" class="mb-12">
                 <h2 class="text-2xl font-serif text-center mb-6 text-gray-700">Explore Our Categories</h2>
                 <div id="category-container" class="flex flex-wrap justify-center gap-3">
-                    <!-- Categories will be dynamically inserted here -->
-                </div>
+                    </div>
             </section>
 
-            <!-- Product Display -->
             <section>
                  <h2 id="product-section-title" class="text-2xl font-serif text-center mb-6 text-gray-700 hidden"></h2>
                 
-                <!-- Info Note -->
                 <div class="bg-green-50 border-l-4 border-green-400 text-green-800 p-4 rounded-r-lg mb-8 flex items-start space-x-3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 flex-shrink-0 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -283,8 +274,7 @@
                 </div>
 
                 <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                    <!-- Products will be dynamically inserted here -->
-                </div>
+                    </div>
             </section>
         </main>
         
@@ -294,10 +284,8 @@
     </div>
 
 
-    <!-- Cart Modal -->
     <div id="cart-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md m-4 transform scale-95">
-            <!-- Modal Header -->
             <div class="flex justify-between items-center p-4 border-b">
                 <h3 class="text-xl font-serif text-gray-800">Your Shopping Cart</h3>
                 <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800">
@@ -306,11 +294,9 @@
                     </svg>
                 </button>
             </div>
-            <!-- Modal Body -->
             <div id="cart-items-container" class="p-6 max-h-96 overflow-y-auto">
                  <p class="text-gray-500 text-center">Your cart is empty.</p>
             </div>
-            <!-- Modal Footer -->
             <div class="p-4 bg-gray-50 rounded-b-lg">
                 <div class="flex justify-between items-center mb-4">
                     <span class="text-lg font-semibold text-gray-700">Total:</span>
@@ -324,7 +310,6 @@
         </div>
     </div>
     
-    <!-- Admin Panel Button -->
     <button id="open-admin-btn" class="admin-btn">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -332,7 +317,6 @@
         </svg>
     </button>
     
-    <!-- Full Page Admin Panel -->
     <div id="admin-page" class="hidden fixed inset-0 bg-gray-50 z-50 overflow-y-auto">
         <header class="bg-white shadow-sm sticky top-0">
             <div class="container mx-auto px-6 py-4 flex justify-between items-center">
@@ -344,7 +328,6 @@
             </div>
         </header>
         <main class="container mx-auto px-6 py-8">
-            <!-- Admin Tabs -->
             <div class="border-b border-gray-200 mb-6">
                 <nav class="-mb-px flex space-x-6" aria-label="Tabs">
                     <button id="manage-tab-btn" class="admin-tab-btn active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Manage Products</button>
@@ -355,12 +338,9 @@
                 </nav>
             </div>
 
-            <!-- Manage Products Content -->
             <div id="manage-products-content">
-                <!-- Admin product list will be rendered here -->
-            </div>
+                </div>
 
-            <!-- Add/Edit Product Content -->
             <div id="add-product-content" class="hidden">
                 <div class="bg-white p-8 rounded-lg shadow-md max-w-2xl mx-auto">
                     <form id="add-product-form">
@@ -415,7 +395,6 @@
                 </div>
             </div>
 
-            <!-- Arrange Categories Content -->
             <div id="arrange-content" class="hidden">
                 <div class="bg-white p-8 rounded-lg shadow-md max-w-2xl mx-auto">
                     <div>
@@ -423,8 +402,7 @@
                         <p class="mt-1 text-sm text-gray-500">Drag and drop the categories to change their display order on the store page.</p>
                     </div>
                     <div id="category-list" class="mt-6 space-y-2">
-                        <!-- Draggable categories will be here -->
-                    </div>
+                        </div>
                     <div class="pt-5 flex justify-between items-center">
                         <p id="category-order-message" class="text-sm font-medium h-5"></p>
                         <button id="save-category-order-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg">Save Order</button>
@@ -432,7 +410,6 @@
                 </div>
             </div>
 
-            <!-- Settings Content -->
             <div id="settings-content" class="hidden">
                 <div class="bg-white p-8 rounded-lg shadow-md max-w-2xl mx-auto">
                     <form id="change-password-form">
@@ -465,7 +442,6 @@
         </main>
     </div>
     
-    <!-- Password Modal -->
     <div id="password-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-sm m-4 transform scale-95">
             <div class="p-6">
@@ -481,7 +457,6 @@
         </div>
     </div>
     
-    <!-- Confirmation Modal -->
     <div id="confirm-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-sm m-4 transform scale-95">
              <div class="p-6">
@@ -515,7 +490,8 @@
             let productsData = {};
             let categories = [];
             let cart = {};
-            
+            let newProductImageFiles = []; // *** MODIFICATION: Array to store File objects for upload ***
+
             // --- DOM ELEMENTS ---
             const loadingIndicator = document.getElementById('loading-indicator');
             const storePage = document.getElementById('store-page');
@@ -939,6 +915,7 @@
                 productIdInput.value = '';
                 variantsContainer.innerHTML = '';
                 imagePreviewContainer.innerHTML = '';
+                newProductImageFiles = []; // *** MODIFICATION: Clear the file storage array ***
                 formTitle.textContent = 'Add New Product';
                 formSubtitle.textContent = 'Fill in the details for the new product.';
                 formSubmitBtn.textContent = 'Save Product';
@@ -1011,7 +988,7 @@
                 categorySelect.value = product.category;
                 
                 const existingImages = (product.images || [product.img] || []).filter(Boolean);
-                imagePreviewContainer.innerHTML = existingImages.map(imgUrl => createImagePreview(imgUrl, false)).join('');
+                imagePreviewContainer.innerHTML = existingImages.map(imgUrl => createImagePreview(imgUrl, null)).join(''); // Existing images don't have a fileId
 
                 if (product.variants && product.variants.length > 0) {
                     product.variants.forEach(variant => addVariantInput(variant.size, variant.price, variant.image));
@@ -1134,73 +1111,127 @@
                 }
             });
             
-            function createImagePreview(imageDataUrl) {
+            // *** MODIFICATION: createImagePreview now accepts a fileId to link the preview to the file object ***
+            function createImagePreview(imageDataUrl, fileId) {
+                const idAttribute = fileId ? `data-file-id="${fileId}"` : '';
                 return `
-                    <div class="relative">
+                    <div class="relative" ${idAttribute}>
                         <img src="${imageDataUrl}" class="w-full h-24 object-cover rounded-md">
                         <button type="button" class="image-delete-btn">&times;</button>
                     </div>`;
             }
 
+            // *** MODIFICATION: Store File objects and link them to previews ***
             imageUploadInput.addEventListener('change', (e) => {
                 const files = e.target.files;
                 Array.from(files).forEach(file => {
+                    const fileId = `file-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+                    file.id = fileId; // Attach a unique ID to the file object itself
+                    newProductImageFiles.push(file); // Store the actual File object
+
                     const reader = new FileReader();
                     reader.onload = (event) => {
-                        imagePreviewContainer.insertAdjacentHTML('beforeend', createImagePreview(event.target.result));
+                        // Pass the ID to create a link between the preview and the file object
+                        imagePreviewContainer.insertAdjacentHTML('beforeend', createImagePreview(event.target.result, fileId));
                     }
                     reader.readAsDataURL(file);
                 });
-                imageUploadInput.value = '';
+                imageUploadInput.value = ''; // Clear input to allow re-selecting the same file
             });
 
+            // *** MODIFICATION: When a preview is deleted, also remove the corresponding File object ***
             imagePreviewContainer.addEventListener('click', e => {
                  if (e.target.classList.contains('image-delete-btn')) {
-                    e.target.parentElement.remove();
+                    const previewWrapper = e.target.closest('.relative');
+                    const fileIdToRemove = previewWrapper.dataset.fileId;
+                    
+                    if (fileIdToRemove) {
+                        // Filter out the deleted file from our storage array
+                        newProductImageFiles = newProductImageFiles.filter(file => file.id !== fileIdToRemove);
+                    }
+                    
+                    // Remove the preview element from the page
+                    previewWrapper.remove();
                 }
             });
 
-
+            // =================================================================================================
+            // *** REPLACEMENT: The entire form submission logic is replaced to use FormData for file uploads ***
+            // =================================================================================================
             addProductForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                const formSubmitButton = e.target.querySelector('button[type="submit"]');
+                formSubmitButton.disabled = true;
+                formSubmitButton.textContent = 'Saving...';
+
+                // 1. Use FormData, which is required for file uploads
+                const formData = new FormData();
+
                 const editingProductId = productIdInput.value;
+                const name = document.getElementById('product-name').value;
+                let category = categorySelect.value || newCategoryInput.value.trim();
                 
-                const formData = new FormData(e.target);
-                const name = formData.get('name');
-                let category = formData.get('category') || formData.get('newCategory').trim();
-                if (!name || !category) { 
+                if (!name || !category) {
                     alert("Product Name and Category are required.");
-                    return; 
+                    formSubmitButton.disabled = false;
+                    formSubmitButton.textContent = 'Save Product';
+                    return;
                 }
 
-                const productPayload = {
-                    name: name,
-                    category: category,
-                    description: formData.get('description'),
-                };
-                
-                const variants = [];
-                document.querySelectorAll('#variants-container .variant-row-wrapper').forEach(v => {
-                    const size = v.querySelector('.variant-size').value;
-                    const price = parseFloat(v.querySelector('.variant-price').value);
-                    const imagePreview = v.querySelector('.variant-image-preview');
-                    const image = imagePreview.src.startsWith('data:') || imagePreview.src.startsWith('http') ? imagePreview.src : '';
+                // 2. Append standard text fields to FormData
+                formData.append('name', name);
+                formData.append('category', category);
+                formData.append('description', document.getElementById('product-description').value);
 
-                    if(size && !isNaN(price)) variants.push({size, price, image});
-                });
+                // 3. Append any NEW main product images from our file storage array
+                for (const file of newProductImageFiles) {
+                    formData.append('images', file);
+                }
                 
-                const finalImages = Array.from(imagePreviewContainer.querySelectorAll('img')).map(img => img.src);
+                // Also send a list of existing image URLs (for editing products)
+                // The backend will use this to know which old images to keep
+                const existingImages = Array.from(imagePreviewContainer.querySelectorAll('img'))
+                    .map(img => img.src)
+                    .filter(src => src.startsWith('http')); // Only keep URLs, not new data URIs from previews
+                formData.append('existingImages', JSON.stringify(existingImages));
+
+                // 4. Collect variant data and variant-specific images
+                const variants = [];
+                const variantRows = document.querySelectorAll('#variants-container .variant-row-wrapper');
+                variantRows.forEach((row, index) => {
+                    const size = row.querySelector('.variant-size').value;
+                    const price = parseFloat(row.querySelector('.variant-price').value);
+                    const imageInput = row.querySelector('.variant-image-input');
+                    const imagePreview = row.querySelector('.variant-image-preview');
+
+                    if (size && !isNaN(price)) {
+                        // For the variant payload, determine if we are keeping an old image
+                        let variantImage = imagePreview.src.startsWith('http') ? imagePreview.src : '';
+                        variants.push({ size, price, image: variantImage });
+
+                        // If a new file was selected for this variant, append it to FormData
+                        if (imageInput.files[0]) {
+                            // The backend can map this file to the variant using its index
+                            formData.append(`variant_image_${index}`, imageInput.files[0]);
+                        }
+                    }
+                });
 
                 if (variants.length > 0) {
-                    productPayload.variants = variants;
-                    productPayload.images = finalImages.length ? finalImages : ['https://placehold.co/400x400/ccc/999?text=No+Image'];
+                    // Send variant data as a JSON string; backend will parse it
+                    formData.append('variants', JSON.stringify(variants));
                 } else {
-                    const price = parseFloat(formData.get('price'));
-                    if (isNaN(price)) { alert("Price for non-variant product is required."); return; }
-                    productPayload.price = price;
-                    productPayload.img = finalImages.length ? finalImages[0] : 'https://placehold.co/400x400/ccc/999?text=No+Image';
+                    const price = parseFloat(document.getElementById('product-price').value);
+                    if (isNaN(price)) {
+                        alert("Price for non-variant product is required.");
+                        formSubmitButton.disabled = false;
+                        formSubmitButton.textContent = 'Save Product';
+                        return;
+                    }
+                    formData.append('price', price);
                 }
-                
+
+                // 5. Send the request
                 const isEditing = !!editingProductId;
                 const url = isEditing ? `${API_URL}/products/${editingProductId}` : `${API_URL}/products`;
                 const method = isEditing ? 'PUT' : 'POST';
@@ -1208,23 +1239,31 @@
                 try {
                     const response = await fetch(url, {
                         method: method,
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(productPayload)
+                        // DO NOT set the 'Content-Type' header. 
+                        // The browser sets it automatically to 'multipart/form-data' when using FormData.
+                        body: formData 
                     });
+
                     if (!response.ok) {
-                        const errData = await response.json().catch(()=>({}));
+                        const errData = await response.json().catch(() => ({}));
                         throw new Error(errData.message || `HTTP error! status: ${response.status}`);
                     }
+                    
                     alert(`Product ${isEditing ? 'updated' : 'added'} successfully!`);
                     await initStoreView();
                     switchAdminTab(manageTabBtn);
                     renderAdminProductList();
+
                 } catch (error) {
                     console.error(`Failed to ${isEditing ? 'update' : 'add'} product:`, error);
                     alert(`Failed to ${isEditing ? 'update' : 'add'} product: ${error.message}`);
+                } finally {
+                    formSubmitButton.disabled = false;
+                    formSubmitButton.textContent = 'Save Product';
+                    resetProductForm();
                 }
             });
-            
+
             changePasswordForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 passwordChangeMessage.textContent = '';
@@ -1389,4 +1428,3 @@
     </script>
 </body>
 </html>
-
