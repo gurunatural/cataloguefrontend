@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guru Sampoorna - Organic & Natural Products</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FBF9F6; /* Soft beige background */
+        }
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        .category-btn {
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .category-btn.active {
+            background-color: #86A873 !important; /* Muted green for active state */
+            color: #ffffff !important;
+            border-color: #709160;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+        .category-btn:hover:not(.active) {
+            background-color: #E9E5E0;
+            border-color: #D1C9C0;
+        }
+        .product-card {
+            border: 1px solid #E9E5E0;
+            border-radius: 20px; /* Creative border radius */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            background: linear-gradient(145deg, #ffffff, #F8F6F2);
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(134, 168, 115, 0.15);
+            border-color: #D0E0C4;
+        }
+        .add-to-cart-btn {
+            background-color: #4A6C4A; /* Darker green for contrast */
+            transition: background-color 0.3s ease;
+        }
+        .add-to-cart-btn:hover {
+            background-color: #3B563B;
+        }
+        .quantity-btn, .cart-quantity-btn {
+            background-color: #F1F1F1;
+            transition: background-color 0.2s ease;
+        }
+        .quantity-btn:hover, .cart-quantity-btn:hover {
+            background-color: #E0E0E0;
+        }
+        .cart-bubble {
+            animation: pop 0.3s ease-out;
+        }
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        .variant-btn {
+            transition: all 0.2s ease-in-out;
+            border: 1px solid #D1C9C0;
+        }
+        .variant-btn.active {
+            background-color: #4A6C4A;
+            color: white;
+            border-color: #3B563B;
+            transform: scale(1.05);
+        }
+        .scroll-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .scroll-btn:hover {
+            background-color: white;
+        }
+        .scroll-btn.left { left: 8px; }
+        .scroll-btn.right { right: 8px; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
+        
+        /* Control Buttons */
+        .control-btn {
+            position: fixed;
+            bottom: 20px;
+            background-color: white;
+            padding: 0.75rem;
+            border-radius: 9999px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1);
+            color: #4A5568;
+            transition: color .2s ease-in-out;
+        }
+        .control-btn:hover {
+            color: #1a202c;
+        }
+        #open-admin-btn { left: 20px; z-index: 45; }
+        #lang-switcher-btn { right: 20px; z-index: 45; font-weight: 600; padding: 0.75rem 1rem;}
+
+        
+        /* Admin Page Styles */
+        .admin-tab-btn {
+            transition: all 0.2s ease;
+        }
+        .admin-tab-btn.active {
+            border-color: #4A6C4A;
+            color: #4A6C4A;
+            background-color: #F0F5EE;
+        }
+        
+        /* Hide file input */
+        .hidden-file-input {
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+        }
+
+        /* Image Preview Delete Button */
+        .image-delete-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: rgba(220, 38, 38, 0.9);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            line-height: 1;
+            border: 2px solid white;
+            transition: all 0.2s ease;
+        }
+        .image-delete-btn:hover {
+            background-color: #DC2626;
+            transform: scale(1.1);
+        }
+        
+        /* Loading Spinner */
+        .loading-dots span {
+            animation: blink 1.4s infinite both;
+        }
+        .loading-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .loading-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes blink {
+            0%, 80%, 100% {
+                background-color: #D1D5DB; /* gray-300 */
+            }
+            40% {
+                background-color: #1a202c; /* black */
+            }
+        }
+
+        /* Add to Cart Button Flash */
+        @keyframes flash-yellow {
+            0%   { background-color: #4A6C4A; }
+            50%  { background-color: #FBBF24; } /* yellow-400 */
+            100% { background-color: #4A6C4A; }
+        }
+        .flash-effect {
+            animation: flash-yellow 0.6s ease-in-out;
+        }
+
+        /* Cart Total Pop */
+        @keyframes pop-price {
+            0%   { transform: scale(1); }
+            50%  { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .pop-price-effect {
+            display: inline-block; /* Required for transform */
+            animation: pop-price 0.4s ease-out;
+        }
+
+        /* Drag and Drop Styling */
+        .draggable-category {
+            cursor: move;
+        }
+        .dragging {
+            opacity: 0.5;
+            background: #d1fae5;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <!-- Loading Indicator -->
+    <div id="loading-indicator" class="fixed inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="loading-dots flex gap-2">
+            <span class="w-3 h-6 bg-gray-300 rounded-full"></span>
+            <span class="w-3 h-6 bg-gray-300 rounded-full"></span>
+            <span class="w-3 h-6 bg-gray-300 rounded-full"></span>
+        </div>
+    </div>
+
+    <div id="store-page" class="hidden">
+        <!-- Top Bar -->
+        <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-40 shadow-sm">
+            <nav class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+                <!-- Left: Search Icon -->
+                <div class="flex-1 flex justify-start">
+                    <svg id="search-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+
+                <!-- Center: Title / Search Input -->
+                <div class="flex-1 text-center">
+                     <a href="#" id="store-title" class="font-serif text-2xl sm:text-3xl font-bold text-[#4A6C4A] transition-opacity duration-300">
+                         Guru Sampoorna
+                     </a>
+                     <input type="text" id="search-input" class="w-full max-w-xs sm:max-w-sm hidden border-gray-300 rounded-full px-4 py-1.5 focus:ring-2 focus:ring-[#86A873] focus:border-[#86A873] transition-all duration-300" placeholder="Search for products...">
+                </div>
+
+                <!-- Right: Cart -->
+                <div class="flex-1 flex justify-end">
+                    <button id="cart-icon-btn" class="flex items-center space-x-2 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <div class="text-gray-700 text-sm">
+                            <span id="cart-quantity" class="font-bold">0</span> items | 
+                            <span id="cart-total" class="font-bold">₹0.00</span>
+                        </div>
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="container mx-auto px-6 py-8">
+            <!-- Product Categories -->
+            <section id="categories-section" class="mb-12">
+                <h2 class="text-2xl font-serif text-center mb-6 text-gray-700">Explore Our Categories</h2>
+                <div id="category-container" class="flex flex-wrap justify-center gap-3">
+                    <!-- Categories will be dynamically inserted here -->
+                </div>
+            </section>
+
+            <!-- Product Display -->
+            <section>
+                 <h2 id="product-section-title" class="text-2xl font-serif text-center mb-6 text-gray-700 hidden"></h2>
+                
+                <!-- Info Note -->
+                <div class="bg-green-50 border-l-4 border-green-400 text-green-800 p-4 rounded-r-lg mb-8 flex items-start space-x-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 flex-shrink-0 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="text-sm font-medium">
+                        Once you add all products you like, click on the cart button on the top right corner and click the 'Order Now' button. This will take you to WhatsApp where you can send the message to confirm your order.
+                    </p>
+                </div>
+
+                <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                    <!-- Products will be dynamically inserted here -->
+                </div>
+            </section>
+        </main>
+        
+        <footer class="text-center py-8 mt-12 border-t border-gray-200">
+            <p class="text-gray-500">&copy; 2025 Guru Sampoorna. All rights reserved.</p>
+        </footer>
+    </div>
+
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md m-4 transform scale-95">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 class="text-xl font-serif text-gray-800">Your Shopping Cart</h3>
+                <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <!-- Modal Body -->
+            <div id="cart-items-container" class="p-6 max-h-96 overflow-y-auto">
+                 <p class="text-gray-500 text-center">Your cart is empty.</p>
+            </div>
+            <!-- Modal Footer -->
+            <div class="p-4 bg-gray-50 rounded-b-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-semibold text-gray-700">Total:</span>
+                    <span id="modal-cart-total" class="text-xl font-bold text-[#4A6C4A]">₹0.00</span>
+                </div>
+                <button id="order-now-btn" class="w-full bg-[#4A6C4A] hover:bg-[#3B563B] text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18H3c-.6 0-1-.4-1-1V7c0-.6.4-1 1-1h10c.6 0 1 .4 1 1v11"/><path d="M14 9h4l4 4v4c0 .6-.4 1-1 1h-2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+                    <span>Order Now</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Admin Panel Button -->
+    <button id="open-admin-btn" class="admin-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+    </button>
+    
+    <!-- Full Page Admin Panel -->
+    <div id="admin-page" class="hidden fixed inset-0 bg-gray-50 z-50 overflow-y-auto">
+        <header class="bg-white shadow-sm sticky top-0">
+            <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <h2 class="text-2xl font-serif text-gray-800">Admin Panel</h2>
+                <button id="back-to-store-btn" class="text-sm text-indigo-600 hover:text-indigo-900 font-semibold flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
+                    Back to Store
+                </button>
+            </div>
+        </header>
+        <main class="container mx-auto px-6 py-8">
+            <!-- Admin Tabs -->
+            <div class="border-b border-gray-200 mb-6">
+                <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                    <button id="manage-tab-btn" class="admin-tab-btn active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Manage Products</button>
+                    <button id="add-tab-btn" class="admin-tab-btn text-gray-500 hover:text-gray-700 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent">Add Product</button>
+                    <button id="arrange-tab-btn" class="admin-tab-btn text-gray-500 hover:text-gray-700 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent">Arrange Categories</button>
+                    <button id="settings-tab-btn" class="admin-tab-btn text-gray-500 hover:text-gray-700 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent">Settings</button>
+                    <button id="edit-tab-btn" class="admin-tab-btn text-gray-500 hover:text-gray-700 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent hidden">Edit Product</button>
+                </nav>
+            </div>
+
+            <!-- Manage Products Content -->
+            <div id="manage-products-content">
+                <!-- Admin product list will be rendered here -->
+            </div>
+
+            <!-- Add/Edit Product Content -->
+            <div id="add-product-content" class="hidden">
+                <div class="bg-white p-8 rounded-lg shadow-md max-w-2xl mx-auto">
+                    <form id="add-product-form">
+                        <input type="hidden" id="product-id-input" name="productId">
+                        <div class="space-y-6">
+                            <div>
+                                <h3 id="form-title" class="text-lg font-medium leading-6 text-gray-900">Add New Product</h3>
+                                <p id="form-subtitle" class="mt-1 text-sm text-gray-500">Fill in the details for the new product.</p>
+                            </div>
+                             <div>
+                                <label for="product-category" class="block text-sm font-medium text-gray-700">Category</label>
+                                <select id="product-category" name="category" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></select>
+                                <input type="text" name="newCategory" id="new-category-input" placeholder="Or type a new category" class="mt-2 block w-full border-gray-300 rounded-md shadow-sm sm:text-sm">
+                            </div>
+                             <div>
+                                <label for="product-name" class="block text-sm font-medium text-gray-700">Product Name</label>
+                                <input type="text" name="name" id="product-name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm sm:text-sm">
+                            </div>
+                             <div>
+                                <label for="product-description" class="block text-sm font-medium text-gray-700">Description</label>
+                                <textarea name="description" id="product-description" rows="2" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm sm:text-sm"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Images</label>
+                                <div class="mt-2">
+                                    <input type="file" name="images" id="image-upload-input" multiple accept="image/png, image/jpeg" class="hidden-file-input">
+                                    <label for="image-upload-input" class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+                                        Upload New Images
+                                    </label>
+                                </div>
+                                <div id="image-preview-container" class="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4"></div>
+                            </div>
+                             <div class="border-t border-gray-200 pt-6">
+                                <h4 class="text-md font-medium text-gray-800 mb-2">Product Variants</h4>
+                                <div id="variants-container" class="space-y-4"></div>
+                                <button type="button" id="add-variant-btn" class="mt-4 text-sm text-indigo-600 hover:text-indigo-900 font-semibold">+ Add Variant</button>
+                                <p class="mt-1 text-xs text-gray-500">For variants, you can assign a specific image by clicking the image icon next to the variant input fields.</p>
+                            </div>
+                             <div>
+                                <label for="product-price" class="block text-sm font-medium text-gray-700">Price (for non-variant products)</label>
+                                <input type="number" name="price" id="product-price" step="0.01" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm sm:text-sm">
+                            </div>
+                        </div>
+                        <div class="pt-5">
+                            <div class="flex justify-end gap-3">
+                                <button type="button" id="cancel-edit-btn" class="hidden bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg">Cancel</button>
+                                <button type="submit" id="form-submit-btn" class="bg-[#4A6C4A] hover:bg-[#3B563B] text-white font-bold py-2 px-4 rounded-lg">Save Product</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Arrange Categories Content -->
+            <div id="arrange-content" class="hidden">
+                <div class="bg-white p-8 rounded-lg shadow-md max-w-2xl mx-auto">
+                    <div>
+                        <h3 class="text-lg font-medium leading-6 text-gray-900">Arrange Categories</h3>
+                        <p class="mt-1 text-sm text-gray-500">Drag and drop the categories to change their display order on the store page.</p>
+                    </div>
+                    <div id="category-list" class="mt-6 space-y-2">
+                        <!-- Draggable categories will be here -->
+                    </div>
+                    <div class="pt-5 flex justify-between items-center">
+                        <p id="category-order-message" class="text-sm font-medium h-5"></p>
+                        <button id="save-category-order-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg">Save Order</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Content -->
+            <div id="settings-content" class="hidden">
+                <div class="bg-white p-8 rounded-lg shadow-md max-w-2xl mx-auto">
+                    <form id="change-password-form">
+                        <div class="space-y-6">
+                             <div>
+                                <h3 class="text-lg font-medium leading-6 text-gray-900">Change Admin Password</h3>
+                                <p class="mt-1 text-sm text-gray-500">Update the password used to access the admin panel.</p>
+                            </div>
+                            <div>
+                                <label for="old-password" class="block text-sm font-medium text-gray-700">Old Password</label>
+                                <input type="password" id="old-password" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm sm:text-sm">
+                            </div>
+                            <div>
+                                <label for="new-password" class="block text-sm font-medium text-gray-700">New Password</label>
+                                <input type="password" id="new-password" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm sm:text-sm">
+                            </div>
+                            <div>
+                                <label for="confirm-password" class="block text-sm font-medium text-gray-700">Confirm New Password</label>
+                                <input type="password" id="confirm-password" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm sm:text-sm">
+                            </div>
+                        </div>
+                        <div class="pt-5 flex justify-between items-center">
+                            <p id="password-change-message" class="text-sm font-medium h-5"></p>
+                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg">Change Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+    </div>
+    
+    <!-- Password Modal -->
+    <div id="password-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-sm m-4 transform scale-95">
+            <div class="p-6">
+                 <h3 class="text-lg font-medium leading-6 text-gray-900 mb-2">Admin Access</h3>
+                 <p class="text-sm text-gray-500 mb-4">Please enter the password to manage products.</p>
+                 <input type="password" id="password-input" class="w-full border-gray-300 rounded-md shadow-sm" placeholder="Password">
+                 <p id="password-error" class="text-red-500 text-xs mt-1 h-4"></p>
+                 <div class="mt-4 flex justify-end gap-3">
+                     <button id="password-cancel-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md text-sm font-medium hover:bg-gray-300">Cancel</button>
+                     <button id="password-submit-btn" class="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700">Login</button>
+                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-sm m-4 transform scale-95">
+             <div class="p-6">
+                <div class="flex items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="confirm-title">Delete Product</h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500" id="confirm-message">Are you sure you want to delete this product? This action cannot be undone.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                    <button type="button" id="confirm-delete-btn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 sm:ml-3 sm:w-auto sm:text-sm">Delete</button>
+                    <button type="button" id="confirm-cancel-btn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:w-auto sm:text-sm">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- CONFIG ---
+            const API_URL = 'https://gurunatural.onrender.com/api';
+            let ADMIN_PASSWORD = 'Govind@123#';
+
+            // --- DATA STORE ---
+            let productsData = {};
+            let categories = [];
+            let cart = {};
+            
+            // --- DOM ELEMENTS ---
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const storePage = document.getElementById('store-page');
+            const storeTitle = document.getElementById('store-title');
+            const categoryContainer = document.getElementById('category-container');
+            const productGrid = document.getElementById('product-grid');
+            const productSectionTitle = document.getElementById('product-section-title');
+            const cartQuantityEl = document.getElementById('cart-quantity');
+            const cartTotalEl = document.getElementById('cart-total');
+            const searchIcon = document.getElementById('search-icon');
+            const searchInput = document.getElementById('search-input');
+            const cartModal = document.getElementById('cart-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const cartIconBtn = document.getElementById('cart-icon-btn');
+            const cartItemsContainer = document.getElementById('cart-items-container');
+            const modalCartTotal = document.getElementById('modal-cart-total');
+            const orderNowBtn = document.getElementById('order-now-btn');
+            const adminPage = document.getElementById('admin-page');
+            const openAdminBtn = document.getElementById('open-admin-btn');
+            const backToStoreBtn = document.getElementById('back-to-store-btn');
+            const passwordModal = document.getElementById('password-modal');
+            const passwordInput = document.getElementById('password-input');
+            const passwordSubmitBtn = document.getElementById('password-submit-btn');
+            const passwordCancelBtn = document.getElementById('password-cancel-btn');
+            const passwordError = document.getElementById('password-error');
+            const manageTabBtn = document.getElementById('manage-tab-btn');
+            const addTabBtn = document.getElementById('add-tab-btn');
+            const editTabBtn = document.getElementById('edit-tab-btn');
+            const arrangeTabBtn = document.getElementById('arrange-tab-btn');
+            const settingsTabBtn = document.getElementById('settings-tab-btn');
+            const manageProductsContent = document.getElementById('manage-products-content');
+            const addProductContent = document.getElementById('add-product-content');
+            const arrangeContent = document.getElementById('arrange-content');
+            const settingsContent = document.getElementById('settings-content');
+            const addProductForm = document.getElementById('add-product-form');
+            const productIdInput = document.getElementById('product-id-input');
+            const formTitle = document.getElementById('form-title');
+            const formSubtitle = document.getElementById('form-subtitle');
+            const formSubmitBtn = document.getElementById('form-submit-btn');
+            const cancelEditBtn = document.getElementById('cancel-edit-btn');
+            const categorySelect = document.getElementById('product-category');
+            const newCategoryInput = document.getElementById('new-category-input');
+            const addVariantBtn = document.getElementById('add-variant-btn');
+            const variantsContainer = document.getElementById('variants-container');
+            const imageUploadInput = document.getElementById('image-upload-input');
+            const imagePreviewContainer = document.getElementById('image-preview-container');
+            const confirmModal = document.getElementById('confirm-modal');
+            const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+            const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
+            const confirmMessage = document.getElementById('confirm-message');
+            const changePasswordForm = document.getElementById('change-password-form');
+            const oldPasswordInput = document.getElementById('old-password');
+            const newPasswordInput = document.getElementById('new-password');
+            const confirmPasswordInput = document.getElementById('confirm-password');
+            const passwordChangeMessage = document.getElementById('password-change-message');
+            const categoryList = document.getElementById('category-list');
+            const saveCategoryOrderBtn = document.getElementById('save-category-order-btn');
+            const categoryOrderMessage = document.getElementById('category-order-message');
+            
+            
+            // --- RENDER FUNCTIONS ---
+            function renderProductCard(product) {
+                const productId = product._id; 
+                if (product.variants && product.variants.length > 0) {
+                    return `
+                        <div class="product-card p-5 flex flex-col" data-product-id="${productId}" data-current-image-idx="0">
+                            <div class="relative mb-4">
+                                <img src="${product.variants[0].image || product.images[0]}" onerror="this.src='https://placehold.co/400x400/ccc/999?text=Image+Not+Found'" alt="${product.name}" class="product-image w-full aspect-square object-cover rounded-lg">
+                                ${product.images.length > 1 ? `
+                                    <div class="scroll-btn left scroll-left"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></div>
+                                    <div class="scroll-btn right scroll-right"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg></div>
+                                ` : ''}
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2 flex-grow">${product.name}</h3>
+                            <div class="variant-container flex flex-wrap items-center gap-2 mb-3">
+                                ${product.variants.map((variant, index) => `<button class="variant-btn px-3 py-1 text-xs rounded-md ${index === 0 ? 'active' : ''}" data-price="${variant.price}" data-size="${variant.size}" data-image-url="${variant.image || ''}">${variant.size}</button>`).join('')}
+                            </div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center border border-gray-200 rounded-full">
+                                    <button class="quantity-btn minus-btn p-2 rounded-l-full">-</button>
+                                    <input type="number" class="quantity-input w-12 text-center border-0 focus:ring-0" value="1" min="1">
+                                    <button class="quantity-btn plus-btn p-2 rounded-r-full">+</button>
+                                </div>
+                                <p class="product-price text-xl font-bold text-[#4A6C4A]">₹${product.variants[0].price.toFixed(2)}</p>
+                            </div>
+                            <p class="text-xs text-gray-500 mb-4">${product.description}</p>
+                            <button class="add-to-cart-btn w-full text-white font-bold py-2 px-4 rounded-full mt-auto">Add to Cart</button>
+                        </div>`;
+                }
+                return `
+                    <div class="product-card p-5 flex flex-col" data-product-id="${productId}">
+                        <img src="${product.img}" onerror="this.src='https://placehold.co/400x400/ccc/999?text=Image+Not+Found'" alt="${product.name}" class="w-full aspect-square object-cover rounded-lg mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2 flex-grow">${product.name}</h3>
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center border border-gray-200 rounded-full">
+                                <button class="quantity-btn minus-btn p-2 rounded-l-full">-</button>
+                                <input type="number" class="quantity-input w-12 text-center border-0 focus:ring-0" value="1" min="1">
+                                <button class="quantity-btn plus-btn p-2 rounded-r-full">+</button>
+                            </div>
+                            <p class="product-price text-xl font-bold text-[#4A6C4A]">₹${product.price.toFixed(2)}</p>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-4">${product.description}</p>
+                        <button class="add-to-cart-btn w-full text-white font-bold py-2 px-4 rounded-full mt-auto">Add to Cart</button>
+                    </div>`;
+            }
+
+            function renderCategories() {
+                categoryContainer.innerHTML = categories.map(category => 
+                    `<button class="category-btn bg-white text-gray-700 font-semibold py-2 px-4 rounded-full shadow-sm">
+                        ${category.name}
+                    </button>`
+                ).join('');
+            }
+
+            function renderProducts(products) {
+                if(!products || products.length === 0) {
+                     productGrid.innerHTML = `<p class="text-center text-gray-500 col-span-full">No products found.</p>`;
+                     return;
+                }
+                productGrid.innerHTML = products.map(renderProductCard).join('');
+            }
+            
+            function updateCartDisplay() {
+                let totalQuantity = 0; let totalPrice = 0;
+                for (const cartKey in cart) { const item = cart[cartKey]; totalQuantity += item.quantity; totalPrice += item.price * item.quantity; }
+                cartQuantityEl.textContent = totalQuantity; cartTotalEl.textContent = `₹${totalPrice.toFixed(2)}`;
+                modalCartTotal.textContent = `₹${totalPrice.toFixed(2)}`; renderCartModal();
+                cartQuantityEl.classList.add('cart-bubble');
+                cartTotalEl.classList.add('pop-price-effect');
+                setTimeout(() => {
+                    cartQuantityEl.classList.remove('cart-bubble');
+                    cartTotalEl.classList.remove('pop-price-effect');
+                }, 400);
+                localStorage.setItem('guruSampoornaCart', JSON.stringify(cart));
+            }
+
+            function renderCartModal() {
+                if (Object.keys(cart).length === 0) { cartItemsContainer.innerHTML = '<p class="text-gray-500 text-center">Your cart is empty.</p>'; return; }
+                cartItemsContainer.innerHTML = Object.entries(cart).map(([cartKey, item]) => `
+                    <div class="flex items-center justify-between py-3 border-b last:border-b-0">
+                        <div class="flex-1">
+                            <p class="font-semibold">${item.name}</p>
+                            ${item.size ? `<p class="text-sm text-gray-500">Variant: ${item.size}</p>` : ''}
+                             <p class="font-semibold text-gray-800 mt-1">₹${(item.price * item.quantity).toFixed(2)}</p>
+                        </div>
+                        <div class="flex items-center border border-gray-200 rounded-full">
+                             <button class="cart-quantity-btn cart-minus-btn p-2 rounded-l-full" data-cart-key="${cartKey}">-</button>
+                             <span class="w-10 text-center text-sm">${item.quantity}</span>
+                             <button class="cart-quantity-btn cart-plus-btn p-2 rounded-r-full" data-cart-key="${cartKey}">+</button>
+                        </div>
+                        <button class="remove-cart-item-btn text-gray-400 hover:text-red-500 p-1 ml-3" data-cart-key="${cartKey}">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                    </div>`).join('');
+            }
+            
+            // --- EVENT HANDLERS ---
+            categoryContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('category-btn')) {
+                    const category = e.target.textContent.trim();
+                    updateURL('category', category);
+                    renderForCurrentState();
+                }
+            });
+
+            productGrid.addEventListener('click', (e) => {
+                const card = e.target.closest('.product-card'); if (!card) return;
+                const productId = card.dataset.productId;
+                const quantityInput = card.querySelector('.quantity-input');
+                const priceEl = card.querySelector('.product-price');
+                
+                let product;
+                for (const category of categories) {
+                    const found = productsData[category.name].find(p => p._id == productId);
+                    if (found) { product = found; break; }
+                }
+                if (!product) return;
+
+                if (e.target.closest('.scroll-left') || e.target.closest('.scroll-right')) {
+                    let currentIdx = parseInt(card.dataset.currentImageIdx);
+                    const isLeft = e.target.closest('.scroll-left');
+                    const imageCount = product.images.length;
+                    currentIdx = isLeft ? (currentIdx - 1 + imageCount) % imageCount : (currentIdx + 1) % imageCount;
+                    card.querySelector('.product-image').src = product.images[currentIdx];
+                    card.dataset.currentImageIdx = currentIdx;
+                    return;
+                }
+
+                if (e.target.classList.contains('variant-btn')) {
+                    card.querySelectorAll('.variant-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    const newPrice = parseFloat(e.target.dataset.price);
+                    quantityInput.value = 1; 
+                    priceEl.textContent = `₹${newPrice.toFixed(2)}`;
+
+                    const imageUrl = e.target.dataset.imageUrl;
+                    card.querySelector('.product-image').src = imageUrl || product.images[0];
+                    return;
+                }
+
+                if (e.target.classList.contains('plus-btn') || e.target.classList.contains('minus-btn')) {
+                    const currentVal = parseInt(quantityInput.value);
+                    quantityInput.value = e.target.classList.contains('plus-btn') ? currentVal + 1 : Math.max(1, currentVal - 1);
+                    let basePrice = product.price;
+                    if (product.variants && product.variants.length > 0) { basePrice = parseFloat(card.querySelector('.variant-btn.active').dataset.price); }
+                    priceEl.textContent = `₹${(basePrice * quantityInput.value).toFixed(2)}`;
+                }
+
+                if (e.target.classList.contains('add-to-cart-btn')) {
+                    const button = e.target;
+                    const quantity = parseInt(quantityInput.value);
+                    if (product.variants && product.variants.length > 0) {
+                        const activeVariant = card.querySelector('.variant-btn.active');
+                        const size = activeVariant.dataset.size; const price = parseFloat(activeVariant.dataset.price);
+                        const cartKey = `${productId}-${size}`;
+                        if (cart[cartKey]) { cart[cartKey].quantity += quantity; } 
+                        else { cart[cartKey] = { productId: product._id, name: product.name, size: size, price: price, quantity: quantity }; }
+                    } else {
+                        const cartKey = `${productId}`;
+                        if (cart[cartKey]) { cart[cartKey].quantity += quantity; } 
+                        else { cart[cartKey] = { productId: product._id, name: product.name, price: product.price, quantity: quantity }; }
+                    }
+                    updateCartDisplay();
+                    button.classList.add('flash-effect');
+                    setTimeout(() => button.classList.remove('flash-effect'), 600);
+                }
+            });
+
+            // --- SEARCH LOGIC & URL/HISTORY MANAGEMENT ---
+            function updateURL(key, value) {
+                try {
+                    const url = new URL(window.location);
+                    if (value) {
+                        url.searchParams.set(key, value);
+                    } else {
+                        url.searchParams.delete(key);
+                    }
+                    history.pushState({}, '', url);
+                } catch(e) {
+                    console.warn("Could not update URL. This might happen in restricted environments like sandboxed iframes.");
+                }
+            }
+
+            function renderForCurrentState() {
+                const params = new URLSearchParams(window.location.search);
+                const searchTerm = params.get('search') || '';
+                const categoryName = params.get('category');
+                
+                searchInput.value = searchTerm;
+
+                if (searchTerm) {
+                    document.getElementById('categories-section').classList.add('hidden');
+                    productSectionTitle.classList.remove('hidden');
+                    productSectionTitle.textContent = `Search results for "${searchTerm}"`;
+                    const allProducts = Object.values(productsData).flat();
+                    const filteredProducts = allProducts.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
+                    renderProducts(filteredProducts);
+                } else {
+                    document.getElementById('categories-section').classList.remove('hidden');
+                    productSectionTitle.classList.add('hidden');
+                    document.querySelectorAll('.category-btn').forEach(btn => {
+                        btn.classList.toggle('active', btn.textContent.trim() === categoryName);
+                    });
+                    renderProducts(productsData[categoryName] || []);
+                }
+            }
+            
+            window.addEventListener('popstate', renderForCurrentState);
+            
+            searchIcon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                storeTitle.classList.add('hidden');
+                searchInput.classList.remove('hidden');
+                searchInput.focus();
+            });
+
+            document.addEventListener('click', (e) => {
+                const isSearchArea = searchInput.contains(e.target) || searchIcon.contains(e.target) || (productGrid && productGrid.contains(e.target));
+                if (!isSearchArea && !searchInput.classList.contains('hidden')) {
+                    searchInput.classList.add('hidden');
+                    storeTitle.classList.remove('hidden');
+                    if (searchInput.value !== '') {
+                        updateURL('search', '');
+                        renderForCurrentState();
+                    }
+                }
+            });
+
+            searchInput.addEventListener('keyup', () => {
+                updateURL('search', searchInput.value.trim().toLowerCase());
+                renderForCurrentState();
+            });
+
+
+            // --- MODALS AND ORDERING LOGIC ---
+            function showModal(modal) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modal.querySelector('.modal-content').classList.remove('scale-95');
+                }, 10);
+            }
+            function hideModal(modal) {
+                modal.classList.add('opacity-0');
+                modal.querySelector('.modal-content').classList.add('scale-95');
+                setTimeout(() => { modal.classList.add('hidden'); }, 300);
+            }
+            
+            function handleOrderNow() {
+                if (Object.keys(cart).length === 0) return;
+                let message = "Hello, I want to order the below items:\n\n"; let totalPrice = 0;
+                Object.values(cart).forEach((item, index) => {
+                    const itemTotal = item.price * item.quantity;
+                    message += `*${index + 1}. ${item.name}*\n`;
+                    if (item.size) { message += `   - Variant: ${item.size}\n`; }
+                    message += `   - Quantity: ${item.quantity}\n`; message += `   - Price: ₹${itemTotal.toFixed(2)}\n\n`;
+                    totalPrice += itemTotal;
+                });
+                message += "---------------------------------\n"; message += `*Total Amount: ₹${totalPrice.toFixed(2)}*`;
+                const phoneNumber = "916262120120";
+                const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+            }
+
+            cartIconBtn.addEventListener('click', () => showModal(cartModal));
+            closeModalBtn.addEventListener('click', () => hideModal(cartModal));
+            cartModal.addEventListener('click', (e) => { if (e.target === cartModal) hideModal(cartModal); });
+            orderNowBtn.addEventListener('click', handleOrderNow);
+            
+            cartItemsContainer.addEventListener('click', (e) => {
+                const removeBtn = e.target.closest('.remove-cart-item-btn');
+                const minusBtn = e.target.closest('.cart-minus-btn');
+                const plusBtn = e.target.closest('.cart-plus-btn');
+
+                if (removeBtn) {
+                    const cartKey = removeBtn.dataset.cartKey;
+                    if (cart[cartKey]) {
+                        delete cart[cartKey];
+                        updateCartDisplay();
+                    }
+                } else if (minusBtn) {
+                     const cartKey = minusBtn.dataset.cartKey;
+                     if (cart[cartKey]) {
+                         cart[cartKey].quantity -= 1;
+                         if (cart[cartKey].quantity <= 0) {
+                             delete cart[cartKey];
+                         }
+                         updateCartDisplay();
+                     }
+                } else if (plusBtn) {
+                    const cartKey = plusBtn.dataset.cartKey;
+                    if (cart[cartKey]) {
+                        cart[cartKey].quantity += 1;
+                        updateCartDisplay();
+                    }
+                }
+            });
+
+            // --- ADMIN PAGE LOGIC & AUTH ---
+            function loadAdminPassword() {
+                const storedPassword = localStorage.getItem('guruSampoornaAdminPassword');
+                if (storedPassword) {
+                    ADMIN_PASSWORD = storedPassword;
+                }
+            }
+
+            function changeAdminPassword(newPassword) {
+                localStorage.setItem('guruSampoornaAdminPassword', newPassword);
+                ADMIN_PASSWORD = newPassword;
+            }
+
+            openAdminBtn.addEventListener('click', () => showModal(passwordModal));
+            passwordCancelBtn.addEventListener('click', () => hideModal(passwordModal));
+            passwordModal.addEventListener('click', e => { if (e.target === passwordModal) hideModal(passwordModal); });
+            passwordSubmitBtn.addEventListener('click', () => {
+                if (passwordInput.value === ADMIN_PASSWORD) {
+                    passwordInput.value = '';
+                    passwordError.textContent = '';
+                    hideModal(passwordModal);
+                    showAdminPage();
+                } else {
+                    passwordError.textContent = "Incorrect password. Please try again.";
+                    passwordInput.value = '';
+                }
+            });
+            
+            function showAdminPage() {
+                storePage.classList.add('hidden');
+                adminPage.classList.remove('hidden');
+                renderAdminProductList();
+                populateCategorySelect();
+            }
+
+            function showStorePage() {
+                storePage.classList.remove('hidden');
+                adminPage.classList.add('hidden');
+                initStoreView();
+            }
+
+            backToStoreBtn.addEventListener('click', showStorePage);
+            
+            function switchAdminTab(activeBtn) {
+                [manageTabBtn, addTabBtn, editTabBtn, settingsTabBtn, arrangeTabBtn].forEach(btn => btn.classList.remove('active'));
+                [manageProductsContent, addProductContent, settingsContent, arrangeContent].forEach(content => content.classList.add('hidden'));
+                
+                activeBtn.classList.add('active');
+                
+                if(activeBtn === manageTabBtn) {
+                    manageProductsContent.classList.remove('hidden');
+                } else if (activeBtn === settingsTabBtn) {
+                    settingsContent.classList.remove('hidden');
+                } else if(activeBtn === arrangeTabBtn) {
+                    arrangeContent.classList.remove('hidden');
+                } else {
+                    addProductContent.classList.remove('hidden');
+                }
+            }
+            
+            function resetProductForm() {
+                addProductForm.reset();
+                productIdInput.value = '';
+                variantsContainer.innerHTML = '';
+                imagePreviewContainer.innerHTML = '';
+                formTitle.textContent = 'Add New Product';
+                formSubtitle.textContent = 'Fill in the details for the new product.';
+                formSubmitBtn.textContent = 'Save Product';
+                cancelEditBtn.classList.add('hidden');
+                editTabBtn.classList.add('hidden');
+            }
+
+            manageTabBtn.addEventListener('click', () => {
+                resetProductForm();
+                switchAdminTab(manageTabBtn);
+                renderAdminProductList();
+            });
+            addTabBtn.addEventListener('click', () => {
+                resetProductForm();
+                switchAdminTab(addTabBtn);
+                populateCategorySelect();
+            });
+            settingsTabBtn.addEventListener('click', () => {
+                switchAdminTab(settingsTabBtn);
+            });
+            arrangeTabBtn.addEventListener('click', () => {
+                switchAdminTab(arrangeTabBtn);
+                renderCategoryArrangementList();
+            });
+            
+            function renderAdminProductList() {
+                 let html = '';
+                for (const category of categories) {
+                    html += `<h3 class="text-xl font-semibold text-gray-700 mt-6 mb-4 pb-2 border-b">${category.name}</h3>`;
+                    const productsInCategory = productsData[category.name] || [];
+                    if (productsInCategory.length === 0) {
+                         html += `<p class="text-gray-500">No products in this category.</p>`;
+                    } else {
+                         html += `<div class="space-y-4">`;
+                        productsInCategory.forEach(product => {
+                            html += `
+                                <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
+                                    <div class="flex items-start gap-4 flex-1">
+                                        <img src="${product.variants && product.variants.length > 0 ? product.variants[0].image || product.images[0] : product.img}" onerror="this.src='https://placehold.co/100x100/ccc/999?text=Image'" class="w-16 h-16 object-cover rounded-md">
+                                        <div>
+                                            <p class="font-bold text-gray-800">${product.name}</p>
+                                            <p class="text-sm text-gray-500">${product.variants && product.variants.length > 0 ? product.variants.map(v => `${v.size} (₹${v.price})`).join(', ') : `₹${product.price}`}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="edit-product-btn text-blue-500 hover:text-blue-700 font-semibold text-sm" data-product-id="${product._id}">Edit</button>
+                                        <button class="delete-product-btn text-red-500 hover:text-red-700 font-semibold text-sm" data-product-id="${product._id}" data-product-name="${product.name}">Remove</button>
+                                    </div>
+                                </div>`;
+                        });
+                         html += `</div>`;
+                    }
+                }
+                manageProductsContent.innerHTML = html;
+            }
+            
+            function populateEditForm(product) {
+                resetProductForm();
+                formTitle.textContent = `Editing: ${product.name}`;
+                formSubtitle.textContent = 'Update the product details below.';
+                formSubmitBtn.textContent = 'Update Product';
+                cancelEditBtn.classList.remove('hidden');
+                editTabBtn.classList.remove('hidden');
+
+                productIdInput.value = product._id;
+                document.getElementById('product-name').value = product.name;
+                document.getElementById('product-description').value = product.description || '';
+                
+                populateCategorySelect();
+                categorySelect.value = product.category;
+                
+                const existingImages = (product.images || [product.img] || []).filter(Boolean);
+                imagePreviewContainer.innerHTML = existingImages.map(imgUrl => createImagePreview(imgUrl, false)).join('');
+
+                if (product.variants && product.variants.length > 0) {
+                    product.variants.forEach(variant => addVariantInput(variant.size, variant.price, variant.image));
+                } else {
+                    document.getElementById('product-price').value = product.price || '';
+                }
+                
+                switchAdminTab(editTabBtn);
+            }
+
+
+            manageProductsContent.addEventListener('click', (e) => {
+                const target = e.target;
+                if(target.classList.contains('delete-product-btn')) {
+                    const { productId, productName } = target.dataset;
+                    confirmMessage.textContent = `Are you sure you want to delete "${productName}"? This action cannot be undone.`;
+                    confirmDeleteBtn.dataset.productId = productId;
+                    showModal(confirmModal);
+                } else if (target.classList.contains('edit-product-btn')) {
+                    const { productId } = target.dataset;
+                    const allProducts = Object.values(productsData).flat();
+                    const productToEdit = allProducts.find(p => p._id === productId);
+                    if (productToEdit) {
+                        populateEditForm(productToEdit);
+                    }
+                }
+            });
+            
+            cancelEditBtn.addEventListener('click', () => {
+                switchAdminTab(manageTabBtn);
+                resetProductForm();
+            });
+
+            confirmCancelBtn.addEventListener('click', () => hideModal(confirmModal));
+            confirmModal.addEventListener('click', (e) => { if (e.target === confirmModal) hideModal(confirmModal); });
+            confirmDeleteBtn.addEventListener('click', async (e) => {
+                const { productId } = e.target.dataset;
+                try {
+                    const response = await fetch(`${API_URL}/products/${productId}`, {
+                        method: 'DELETE'
+                    });
+                    if (!response.ok) {
+                        const errData = await response.json().catch(() => ({}));
+                        throw new Error(errData.message || `HTTP error! status: ${response.status}`);
+                    }
+                    alert('Product deleted successfully!');
+                    await initStoreView(); 
+                    renderAdminProductList(); 
+                } catch (error) {
+                    console.error('Failed to delete product:', error);
+                    alert(`Failed to delete product: ${error.message}`);
+                } finally {
+                    hideModal(confirmModal);
+                }
+            });
+
+            function populateCategorySelect() {
+                categorySelect.innerHTML = `<option value="">-- Select Existing --</option>` + categories.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+            }
+
+            function addVariantInput(size = '', price = '', image = '') {
+                const uniqueId = `variant-image-${Date.now()}-${Math.random()}`;
+                const variantDiv = document.createElement('div');
+                variantDiv.className = 'variant-row-wrapper border-t pt-4';
+                variantDiv.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <input type="text" placeholder="Size (e.g., 1 Lt)" class="variant-size w-full border-gray-300 rounded-md shadow-sm sm:text-sm" value="${size}" required>
+                        <input type="number" placeholder="Price" step="0.01" class="variant-price w-full border-gray-300 rounded-md shadow-sm sm:text-sm" value="${price}" required>
+                        <button type="button" class="remove-variant-btn text-red-500 p-1 rounded-full hover:bg-red-100 font-bold text-xl flex-shrink-0">&times;</button>
+                    </div>
+                    <div class="flex items-center gap-2 mt-2 pl-1">
+                        <input type="file" id="${uniqueId}" class="hidden-file-input variant-image-input" accept="image/png, image/jpeg">
+                        <label for="${uniqueId}" class="variant-image-label cursor-pointer flex items-center justify-center h-12 w-12 border-2 border-dashed rounded-md bg-gray-50 text-gray-400 hover:bg-gray-100 relative">
+                            <img src="${image}" class="variant-image-preview ${image ? '' : 'hidden'} w-full h-full object-cover rounded-md">
+                            <span class="variant-image-placeholder ${image ? 'hidden' : ''} text-2xl font-light">+</span>
+                        </label>
+                        <button type="button" class="variant-image-remove-btn ${image ? '' : 'hidden'} text-red-500 text-xs font-semibold">Remove Image</button>
+                    </div>
+                `;
+                variantsContainer.appendChild(variantDiv);
+            }
+            
+            addVariantBtn.addEventListener('click', () => addVariantInput());
+
+            variantsContainer.addEventListener('change', e => {
+                if (e.target.classList.contains('variant-image-input')) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        const row = e.target.closest('.variant-row-wrapper');
+                        const preview = row.querySelector('.variant-image-preview');
+                        const placeholder = row.querySelector('.variant-image-placeholder');
+                        const removeBtn = row.querySelector('.variant-image-remove-btn');
+                        
+                        reader.onload = function(event) {
+                            preview.src = event.target.result;
+                            preview.classList.remove('hidden');
+                            placeholder.classList.add('hidden');
+                            removeBtn.classList.remove('hidden');
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                }
+            });
+            
+            variantsContainer.addEventListener('click', e => {
+                if (e.target.classList.contains('remove-variant-btn')) {
+                    e.target.closest('.variant-row-wrapper').remove();
+                } else if (e.target.classList.contains('variant-image-remove-btn')) {
+                    const row = e.target.closest('.variant-row-wrapper');
+                    const preview = row.querySelector('.variant-image-preview');
+                    const placeholder = row.querySelector('.variant-image-placeholder');
+                    const input = row.querySelector('.variant-image-input');
+
+                    preview.src = '';
+                    preview.classList.add('hidden');
+                    placeholder.classList.remove('hidden');
+                    e.target.classList.add('hidden');
+                    input.value = ''; // Clear file input
+                }
+            });
+            
+            function createImagePreview(imageDataUrl) {
+                return `
+                    <div class="relative">
+                        <img src="${imageDataUrl}" class="w-full h-24 object-cover rounded-md">
+                        <button type="button" class="image-delete-btn">&times;</button>
+                    </div>`;
+            }
+
+            imageUploadInput.addEventListener('change', (e) => {
+                const files = e.target.files;
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        imagePreviewContainer.insertAdjacentHTML('beforeend', createImagePreview(event.target.result));
+                    }
+                    reader.readAsDataURL(file);
+                });
+                imageUploadInput.value = '';
+            });
+
+            imagePreviewContainer.addEventListener('click', e => {
+                 if (e.target.classList.contains('image-delete-btn')) {
+                    e.target.parentElement.remove();
+                }
+            });
+
+
+            addProductForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const editingProductId = productIdInput.value;
+                
+                const formData = new FormData(e.target);
+                const name = formData.get('name');
+                let category = formData.get('category') || formData.get('newCategory').trim();
+                if (!name || !category) { 
+                    alert("Product Name and Category are required.");
+                    return; 
+                }
+
+                const productPayload = {
+                    name: name,
+                    category: category,
+                    description: formData.get('description'),
+                };
+                
+                const variants = [];
+                document.querySelectorAll('#variants-container .variant-row-wrapper').forEach(v => {
+                    const size = v.querySelector('.variant-size').value;
+                    const price = parseFloat(v.querySelector('.variant-price').value);
+                    const imagePreview = v.querySelector('.variant-image-preview');
+                    const image = imagePreview.src.startsWith('data:') || imagePreview.src.startsWith('http') ? imagePreview.src : '';
+
+                    if(size && !isNaN(price)) variants.push({size, price, image});
+                });
+                
+                const finalImages = Array.from(imagePreviewContainer.querySelectorAll('img')).map(img => img.src);
+
+                if (variants.length > 0) {
+                    productPayload.variants = variants;
+                    productPayload.images = finalImages.length ? finalImages : ['https://placehold.co/400x400/ccc/999?text=No+Image'];
+                } else {
+                    const price = parseFloat(formData.get('price'));
+                    if (isNaN(price)) { alert("Price for non-variant product is required."); return; }
+                    productPayload.price = price;
+                    productPayload.img = finalImages.length ? finalImages[0] : 'https://placehold.co/400x400/ccc/999?text=No+Image';
+                }
+                
+                const isEditing = !!editingProductId;
+                const url = isEditing ? `${API_URL}/products/${editingProductId}` : `${API_URL}/products`;
+                const method = isEditing ? 'PUT' : 'POST';
+
+                try {
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(productPayload)
+                    });
+                    if (!response.ok) {
+                        const errData = await response.json().catch(()=>({}));
+                        throw new Error(errData.message || `HTTP error! status: ${response.status}`);
+                    }
+                    alert(`Product ${isEditing ? 'updated' : 'added'} successfully!`);
+                    await initStoreView();
+                    switchAdminTab(manageTabBtn);
+                    renderAdminProductList();
+                } catch (error) {
+                    console.error(`Failed to ${isEditing ? 'update' : 'add'} product:`, error);
+                    alert(`Failed to ${isEditing ? 'update' : 'add'} product: ${error.message}`);
+                }
+            });
+            
+            changePasswordForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                passwordChangeMessage.textContent = '';
+                passwordChangeMessage.classList.remove('text-red-500', 'text-green-500');
+
+                const oldPass = oldPasswordInput.value;
+                const newPass = newPasswordInput.value;
+                const confirmPass = confirmPasswordInput.value;
+
+                if (oldPass !== ADMIN_PASSWORD) {
+                    passwordChangeMessage.textContent = 'Old password is incorrect.';
+                    passwordChangeMessage.classList.add('text-red-500');
+                    return;
+                }
+                if (newPass.length < 6) {
+                    passwordChangeMessage.textContent = 'New password must be at least 6 characters.';
+                    passwordChangeMessage.classList.add('text-red-500');
+                    return;
+                }
+                if (newPass !== confirmPass) {
+                    passwordChangeMessage.textContent = 'New passwords do not match.';
+                    passwordChangeMessage.classList.add('text-red-500');
+                    return;
+                }
+                
+                changeAdminPassword(newPass);
+                passwordChangeMessage.textContent = 'Password changed successfully!';
+                passwordChangeMessage.classList.add('text-green-500');
+                changePasswordForm.reset();
+            });
+            
+            // --- CATEGORY ARRANGEMENT ---
+            function renderCategoryArrangementList() {
+                categoryList.innerHTML = categories.map(cat => `
+                    <div class="draggable-category bg-white p-3 rounded-lg shadow-sm flex items-center justify-between" draggable="true" data-category-name="${cat.name}">
+                        <span>${cat.name}</span>
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </div>
+                `).join('');
+            }
+            
+            let draggedItem = null;
+            categoryList.addEventListener('dragstart', e => {
+                draggedItem = e.target;
+                setTimeout(() => e.target.classList.add('dragging'), 0);
+            });
+            categoryList.addEventListener('dragend', e => {
+                e.target.classList.remove('dragging');
+            });
+            categoryList.addEventListener('dragover', e => {
+                e.preventDefault();
+                const afterElement = getDragAfterElement(categoryList, e.clientY);
+                if (afterElement == null) {
+                    categoryList.appendChild(draggedItem);
+                } else {
+                    categoryList.insertBefore(draggedItem, afterElement);
+                }
+            });
+            
+            function getDragAfterElement(container, y) {
+                const draggableElements = [...container.querySelectorAll('.draggable-category:not(.dragging)')];
+                return draggableElements.reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = y - box.top - box.height / 2;
+                    if (offset < 0 && offset > closest.offset) {
+                        return { offset: offset, element: child };
+                    } else {
+                        return closest;
+                    }
+                }, { offset: Number.NEGATIVE_INFINITY }).element;
+            }
+
+            saveCategoryOrderBtn.addEventListener('click', async () => {
+                const orderedCategoryNodes = [...categoryList.querySelectorAll('.draggable-category')];
+                const orderedCategories = orderedCategoryNodes.map(node => node.dataset.categoryName);
+                
+                try {
+                    const response = await fetch(`${API_URL}/categories/order`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ orderedCategories })
+                    });
+                    if (!response.ok) throw new Error('Failed to save order');
+                    
+                    categoryOrderMessage.textContent = 'Order saved successfully!';
+                    categoryOrderMessage.classList.add('text-green-500');
+                    setTimeout(() => categoryOrderMessage.textContent = '', 2000);
+                    await initStoreView(); // Refresh all data to reflect new order
+                } catch (error) {
+                    console.error('Failed to save category order:', error);
+                    categoryOrderMessage.textContent = 'Error saving order.';
+                    categoryOrderMessage.classList.add('text-red-500');
+                    setTimeout(() => categoryOrderMessage.textContent = '', 2000);
+                }
+            });
+
+
+            // --- INITIALIZATION ---
+            async function initStoreView() {
+                loadAdminPassword();
+                loadingIndicator.classList.remove('hidden');
+                storePage.classList.add('hidden');
+
+                try {
+                    const [productsResponse, categoriesResponse] = await Promise.all([
+                        fetch(`${API_URL}/products`),
+                        fetch(`${API_URL}/categories`)
+                    ]);
+
+                    if (!productsResponse.ok || !categoriesResponse.ok) {
+                         throw new Error(`HTTP error!`);
+                    }
+
+                    const flatProductList = await productsResponse.json();
+                    const categoryList = await categoriesResponse.json();
+                    
+                    categories = categoryList;
+
+                    productsData = flatProductList.reduce((acc, product) => {
+                        const category = product.category;
+                        if (!acc[category]) { acc[category] = []; }
+                        acc[category].push(product);
+                        return acc;
+                    }, {});
+
+                } catch (error) {
+                    console.error("Could not fetch data:", error);
+                    loadingIndicator.innerHTML = `<p class="text-center text-red-500 font-semibold p-8">Error: Could not connect to the backend server.<br>Please ensure the server is running and accessible.</p>`
+                    return;
+                } finally {
+                    loadingIndicator.classList.add('hidden');
+                    storePage.classList.remove('hidden');
+                }
+                
+                const savedCart = localStorage.getItem('guruSampoornaCart');
+                cart = savedCart ? JSON.parse(savedCart) : {};
+
+                updateCartDisplay(); 
+                
+                renderCategories();
+                
+                const params = new URLSearchParams(window.location.search);
+                const categoryParam = params.get('category');
+                
+                if (categoryParam && productsData[categoryParam]) {
+                    renderForCurrentState();
+                } else if (categories.length > 0) {
+                    updateURL('category', categories[0].name);
+                    renderForCurrentState();
+                } else {
+                    productGrid.innerHTML = `<p class="text-center text-gray-500 col-span-full">No products found. Add some in the admin panel!</p>`;
+                }
+
+                [cartModal, passwordModal, confirmModal].forEach(modal => {
+                     modal.classList.add('opacity-0');
+                     modal.querySelector('.modal-content').classList.add('scale-95');
+                });
+            }
+
+            initStoreView();
+        });
+    </script>
+</body>
+</html>
+
