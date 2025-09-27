@@ -52,10 +52,6 @@
         .add-to-cart-btn:hover {
             background-color: #3B563B;
         }
-        .out-of-stock-btn {
-            background-color: #9CA3AF;
-            cursor: not-allowed;
-        }
         .quantity-btn, .cart-quantity-btn {
             background-color: #F1F1F1;
             transition: background-color 0.2s ease;
@@ -124,8 +120,6 @@
             color: #1a202c;
         }
         #open-admin-btn { left: 20px; z-index: 45; }
-        #lang-switcher-btn { right: 20px; z-index: 45; font-weight: 600; padding: 0.75rem 1rem;}
-
         
         /* Admin Page Styles */
         .admin-tab-btn {
@@ -220,33 +214,57 @@
             opacity: 0.5;
             background: #d1fae5;
         }
-
-        /* No Stock Button Styling */
-        .stock-btn {
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            color: white;
-            border: none;
+        
+        /* Wishlist Button */
+        .wishlist-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            padding: 6px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.2s ease-in-out;
         }
-        .stock-btn.in-stock {
-            background-color: #16A34A; /* green-600 */
+        .wishlist-btn svg {
+            transition: all 0.2s ease-in-out;
         }
-        .stock-btn.in-stock:hover {
-            background-color: #15803D; /* green-700 */
+        .wishlist-btn:hover {
+            transform: scale(1.1);
         }
-        .stock-btn.out-of-stock {
-            background-color: #DC2626; /* red-600 */
-        }
-        .stock-btn.out-of-stock:hover {
-            background-color: #B91C1C; /* red-700 */
+        .wishlist-btn.active svg {
+            fill: #ef4444; /* red-500 */
+            stroke: #ef4444;
         }
 
-
+        .know-more-btn {
+            font-size: 0.8rem;
+            color: #4A6C4A;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .know-more-btn:hover {
+            color: #3B563B;
+        }
     </style>
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1740145080037340');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1740145080037340&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
 </head>
 <body class="text-gray-800">
     <div id="loading-indicator" class="fixed inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50">
@@ -260,7 +278,7 @@
     <div id="store-page" class="hidden">
         <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-40 shadow-sm">
             <nav class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
-                <div class="flex-1 flex justify-start">
+                <div class="flex-1 flex justify-start items-center gap-4">
                     <svg id="search-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
@@ -273,13 +291,19 @@
                     <input type="text" id="search-input" class="w-full max-w-xs sm:max-w-sm hidden border-gray-300 rounded-full px-4 py-1.5 focus:ring-2 focus:ring-[#86A873] focus:border-[#86A873] transition-all duration-300" placeholder="Search for products...">
                 </div>
 
-                <div class="flex-1 flex justify-end">
+                <div class="flex-1 flex justify-end items-center gap-4">
+                     <button id="wishlist-icon-btn" class="relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.5l1.318-1.182a4.5 4.5 0 116.364 6.364L12 18.75l-7.682-7.682a4.5 4.5 0 010-6.364z" />
+                        </svg>
+                        <span id="wishlist-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </button>
                     <button id="cart-icon-btn" class="flex items-center space-x-2 cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
-                        <div class="text-gray-700 text-sm">
-                            <span id="cart-quantity" class="font-bold">0</span> <span id="cart-items-text">items</span> | 
+                        <div class="text-gray-700 text-sm hidden sm:block">
+                            <span id="cart-quantity" class="font-bold">0</span> items | 
                             <span id="cart-total" class="font-bold">₹0.00</span>
                         </div>
                     </button>
@@ -289,7 +313,7 @@
 
         <main class="container mx-auto px-6 py-8">
             <section id="categories-section" class="mb-12">
-                <h2 id="explore-categories-title" class="text-2xl font-serif text-center mb-6 text-gray-700">Explore Our Categories</h2>
+                <h2 class="text-2xl font-serif text-center mb-6 text-gray-700">Explore Our Categories</h2>
                 <div id="category-container" class="flex flex-wrap justify-center gap-3">
                 </div>
             </section>
@@ -297,7 +321,7 @@
             <section id="product-display-section">
                 <h2 id="product-section-title" class="text-2xl font-serif text-center mb-6 text-gray-700 hidden"></h2>
                 
-                <div id="order-info-banner" class="bg-green-50 border-l-4 border-green-400 text-green-800 p-4 rounded-r-lg mb-8 flex items-start space-x-3">
+                <div class="bg-green-50 border-l-4 border-green-400 text-green-800 p-4 rounded-r-lg mb-8 flex items-start space-x-3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 flex-shrink-0 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -312,7 +336,7 @@
         </main>
         
         <footer class="text-center py-8 mt-12 border-t border-gray-200">
-            <p id="footer-text" class="text-gray-500"></p>
+            <p class="text-gray-500">&copy; ${new Date().getFullYear()} Guru Sampoorna. All rights reserved.</p>
         </footer>
     </div>
 
@@ -320,25 +344,58 @@
     <div id="cart-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md m-4 transform scale-95">
             <div class="flex justify-between items-center p-4 border-b">
-                <h3 id="shopping-cart-title" class="text-xl font-serif text-gray-800">Your Shopping Cart</h3>
-                <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800">
+                <h3 class="text-xl font-serif text-gray-800">Your Shopping Cart</h3>
+                <button id="close-cart-modal-btn" class="text-gray-500 hover:text-gray-800">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
             <div id="cart-items-container" class="p-6 max-h-96 overflow-y-auto">
-                 <p class="text-gray-500 text-center" id="cart-empty-text">Your cart is empty.</p>
+                 <p class="text-gray-500 text-center">Your cart is empty.</p>
             </div>
             <div class="p-4 bg-gray-50 rounded-b-lg">
                 <div class="flex justify-between items-center mb-4">
-                    <span id="total-text" class="text-lg font-semibold text-gray-700">Total:</span>
+                    <span class="text-lg font-semibold text-gray-700">Total:</span>
                     <span id="modal-cart-total" class="text-xl font-bold text-[#4A6C4A]">₹0.00</span>
                 </div>
                 <button id="order-now-btn" class="w-full bg-[#4A6C4A] hover:bg-[#3B563B] text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18H3c-.6 0-1-.4-1-1V7c0-.6.4-1 1-1h10c.6 0 1 .4 1 1v11"/><path d="M14 9h4l4 4v4c0 .6-.4 1-1 1h-2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
-                    <span id="order-now-text">Order Now</span>
+                    <span>Order Now</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="wishlist-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md m-4 transform scale-95">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 class="text-xl font-serif text-gray-800">Your Wishlist</h3>
+                <button id="close-wishlist-modal-btn" class="text-gray-500 hover:text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div id="wishlist-items-container" class="p-6 max-h-96 overflow-y-auto">
+                 <p class="text-gray-500 text-center">Your wishlist is empty.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="details-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-lg m-4 transform scale-95">
+             <div class="flex justify-between items-center p-4 border-b">
+                <h3 id="details-modal-title" class="text-xl font-serif text-gray-800">Product Details</h3>
+                <button id="close-details-modal-btn" class="text-gray-500 hover:text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="flex flex-col md:flex-row gap-6">
+                    <img id="details-modal-img" src="" alt="Product Image" class="w-full md:w-1/2 rounded-lg object-cover">
+                    <div class="w-full md:w-1/2">
+                        <p id="details-modal-desc" class="text-gray-600 text-sm leading-relaxed"></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -349,12 +406,11 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
     </button>
-    <button id="lang-switcher-btn" class="control-btn">हि</button>
     
     <div id="admin-page" class="hidden fixed inset-0 bg-gray-50 z-50 overflow-y-auto">
         <header class="bg-white shadow-sm sticky top-0">
             <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-                <h2 id="admin-panel-title" class="text-2xl font-serif text-gray-800">Admin Panel</h2>
+                <h2 class="text-2xl font-serif text-gray-800">Admin Panel</h2>
                 <button id="back-to-store-btn" class="text-sm text-indigo-600 hover:text-indigo-900 font-semibold flex items-center gap-1">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
                     Back to Store
@@ -395,7 +451,7 @@
                             </div>
                             <div>
                                 <label for="product-description" class="block text-sm font-medium text-gray-700">Description</label>
-                                <textarea name="description" id="product-description" rows="2" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm sm:text-sm"></textarea>
+                                <textarea name="description" id="product-description" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm sm:text-sm"></textarea>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Main Images</label>
@@ -533,41 +589,8 @@
             let productsData = {};
             let categories = [];
             let cart = {};
-            let newProductImageFiles = []; // Array to store File objects for upload
-            let currentLang = localStorage.getItem('guruSampoornaLang') || 'en';
-
-            // --- TRANSLATIONS ---
-            const translations = {
-                en: {
-                    'explore_categories': 'Explore Our Categories',
-                    'order_info': 'Once you add all products you like, click on the cart button on the top right corner and click the \'Order Now\' button. This will take you to WhatsApp where you can send the message to confirm your order.',
-                    'shopping_cart': 'Your Shopping Cart',
-                    'total': 'Total:',
-                    'order_now': 'Order Now',
-                    'cart_empty': 'Your cart is empty.',
-                    'search_placeholder': 'Search for products...',
-                    'items': 'items',
-                    'footer_copyright': `&copy; ${new Date().getFullYear()} Guru Sampoorna. All rights reserved.`,
-                    'back_to_store': 'Back to Store',
-                    'admin_panel': 'Admin Panel',
-                    'out_of_stock': 'Out of Stock'
-                },
-                hi: {
-                    'explore_categories': 'हमारी श्रेणियाँ खोजें',
-                    'order_info': 'एक बार जब आप अपनी पसंद के सभी उत्पाद जोड़ लेते हैं, तो ऊपर दाईं ओर कार्ट बटन पर क्लिक करें और \'अभी ऑर्डर करें\' बटन पर क्लिक करें। यह आपको व्हाट्सएप पर ले जाएगा जहां आप अपने ऑर्डर की पुष्टि के लिए संदेश भेज सकते हैं।',
-                    'shopping_cart': 'आपकी शॉपिंग कार्ट',
-                    'total': 'कुल:',
-                    'order_now': 'अभी ऑर्डर करें',
-                    'cart_empty': 'आपकी कार्ट खाली है।',
-                    'search_placeholder': 'उत्पादों की खोज करें...',
-                    'items': 'आइटम',
-                    'footer_copyright': `&copy; ${new Date().getFullYear()} गुरु सम्पूर्ण। सर्वाधिकार सुरक्षित।`,
-                    'back_to_store': 'स्टोर पर वापस जाएं',
-                    'admin_panel': 'एडमिन पैनल',
-                    'out_of_stock': 'स्टॉक में नहीं है'
-                }
-            };
-
+            let wishlist = [];
+            let newProductImageFiles = [];
 
             // --- DOM ELEMENTS ---
             const loadingIndicator = document.getElementById('loading-indicator');
@@ -580,12 +603,26 @@
             const cartTotalEl = document.getElementById('cart-total');
             const searchIcon = document.getElementById('search-icon');
             const searchInput = document.getElementById('search-input');
+            
             const cartModal = document.getElementById('cart-modal');
-            const closeModalBtn = document.getElementById('close-modal-btn');
+            const closeCartModalBtn = document.getElementById('close-cart-modal-btn');
             const cartIconBtn = document.getElementById('cart-icon-btn');
             const cartItemsContainer = document.getElementById('cart-items-container');
             const modalCartTotal = document.getElementById('modal-cart-total');
             const orderNowBtn = document.getElementById('order-now-btn');
+            
+            const wishlistModal = document.getElementById('wishlist-modal');
+            const closeWishlistModalBtn = document.getElementById('close-wishlist-modal-btn');
+            const wishlistIconBtn = document.getElementById('wishlist-icon-btn');
+            const wishlistItemsContainer = document.getElementById('wishlist-items-container');
+            const wishlistCount = document.getElementById('wishlist-count');
+
+            const detailsModal = document.getElementById('details-modal');
+            const closeDetailsModalBtn = document.getElementById('close-details-modal-btn');
+            const detailsModalTitle = document.getElementById('details-modal-title');
+            const detailsModalImg = document.getElementById('details-modal-img');
+            const detailsModalDesc = document.getElementById('details-modal-desc');
+
             const adminPage = document.getElementById('admin-page');
             const openAdminBtn = document.getElementById('open-admin-btn');
             const backToStoreBtn = document.getElementById('back-to-store-btn');
@@ -627,52 +664,18 @@
             const categoryList = document.getElementById('category-list');
             const saveCategoryOrderBtn = document.getElementById('save-category-order-btn');
             const categoryOrderMessage = document.getElementById('category-order-message');
-            const langSwitcherBtn = document.getElementById('lang-switcher-btn');
             const infoModal = document.getElementById('info-modal');
             const infoModalMessage = document.getElementById('info-modal-message');
             const infoModalOkBtn = document.getElementById('info-modal-ok-btn');
             
             
             // --- RENDER FUNCTIONS ---
-            function updateCardGallery(card, images) {
-                const imageContainer = card.querySelector('.relative');
-                if (!imageContainer) return;
-
-                const newImages = images || [];
-                card.dataset.currentImages = JSON.stringify(newImages);
-                card.dataset.currentImageIdx = 0;
-
-                const mainImage = imageContainer.querySelector('.product-image');
-                if (mainImage) {
-                    mainImage.src = newImages.length > 0 ? newImages[0] : 'https://placehold.co/400x400/ccc/999?text=Image+Not+Found';
-                }
-
-                // Remove old scroll buttons
-                imageContainer.querySelectorAll('.scroll-btn').forEach(btn => btn.remove());
-
-                // Add new scroll buttons if needed
-                if (newImages.length > 1) {
-                    const leftBtn = document.createElement('div');
-                    leftBtn.className = 'scroll-btn left scroll-left';
-                    leftBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>`;
-                    
-                    const rightBtn = document.createElement('div');
-                    rightBtn.className = 'scroll-btn right scroll-right';
-                    rightBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>`;
-                    
-                    imageContainer.appendChild(leftBtn);
-                    imageContainer.appendChild(rightBtn);
-                }
-            }
-            
             function renderProductCard(product) {
                 const productId = product._id;
                 const mainImages = product.images || [product.img].filter(Boolean);
-                const isInStock = product.inStock !== false;
+                const isWishlisted = wishlist.includes(productId);
 
-                const cartButtonHTML = isInStock 
-                    ? `<button class="add-to-cart-btn w-full text-white font-bold py-2 px-4 rounded-full mt-auto">Add to Cart</button>`
-                    : `<button class="out-of-stock-btn w-full text-white font-bold py-2 px-4 rounded-full mt-auto" disabled>${translations[currentLang].out_of_stock}</button>`;
+                let cartButtonHTML = `<button class="add-to-cart-btn w-full text-white font-bold py-2 px-4 rounded-full mt-auto">Add to Cart</button>`;
 
                 if (product.variants && product.variants.length > 0) {
                     const firstVariant = product.variants[0];
@@ -680,13 +683,14 @@
                     const initialImage = initialImages[0] || 'https://placehold.co/400x400/ccc/999?text=Image+Not+Found';
 
                     return `
-                        <div class="product-card p-5 flex flex-col" 
-                             data-product-id="${productId}" 
-                             data-current-image-idx="0" 
-                             data-main-images='${JSON.stringify(mainImages)}' 
-                             data-current-images='${JSON.stringify(initialImages)}'>
+                        <div class="product-card p-5 flex flex-col" data-product-id="${productId}">
                             <div class="relative mb-4">
                                 <img src="${initialImage}" onerror="this.src='https://placehold.co/400x400/ccc/999?text=Image+Not+Found'" alt="${product.name}" class="product-image w-full aspect-square object-cover rounded-lg">
+                                <button class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-product-id="${productId}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.5l1.318-1.182a4.5 4.5 0 116.364 6.364L12 18.75l-7.682-7.682a4.5 4.5 0 010-6.364z" />
+                                    </svg>
+                                </button>
                                 ${initialImages.length > 1 ? `
                                     <div class="scroll-btn left scroll-left"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></div>
                                     <div class="scroll-btn right scroll-right"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg></div>
@@ -707,14 +711,22 @@
                                 </div>
                                 <p class="product-price text-xl font-bold text-[#4A6C4A]">₹${product.variants[0].price.toFixed(2)}</p>
                             </div>
-                            <p class="text-xs text-gray-500 mb-4">${product.description || ''}</p>
-                            ${cartButtonHTML}
+                            <div class="text-center mb-4">
+                                <span class="know-more-btn">Know More</span>
+                            </div>
+                            <div class="cart-button-wrapper mt-auto">${cartButtonHTML}</div>
                         </div>`;
                 }
-                // Non-variant product
                 return `
                     <div class="product-card p-5 flex flex-col" data-product-id="${productId}">
-                        <img src="${mainImages[0] || 'https://placehold.co/400x400/ccc/999?text=Image+Not+Found'}" onerror="this.src='https://placehold.co/400x400/ccc/999?text=Image+Not+Found'" alt="${product.name}" class="w-full aspect-square object-cover rounded-lg mb-4">
+                        <div class="relative mb-4">
+                            <img src="${mainImages[0] || 'https://placehold.co/400x400/ccc/999?text=Image+Not+Found'}" onerror="this.src='https://placehold.co/400x400/ccc/999?text=Image+Not+Found'" alt="${product.name}" class="w-full aspect-square object-cover rounded-lg">
+                             <button class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-product-id="${productId}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.5l1.318-1.182a4.5 4.5 0 116.364 6.364L12 18.75l-7.682-7.682a4.5 4.5 0 010-6.364z" />
+                                </svg>
+                            </button>
+                        </div>
                         <h3 class="text-lg font-semibold text-gray-800 mb-2 flex-grow">${product.name}</h3>
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center border border-gray-200 rounded-full">
@@ -724,8 +736,10 @@
                             </div>
                             <p class="product-price text-xl font-bold text-[#4A6C4A]">₹${product.price.toFixed(2)}</p>
                         </div>
-                        <p class="text-xs text-gray-500 mb-4">${product.description || ''}</p>
-                        ${cartButtonHTML}
+                        <div class="text-center mb-4">
+                            <span class="know-more-btn">Know More</span>
+                        </div>
+                        <div class="cart-button-wrapper mt-auto">${cartButtonHTML}</div>
                     </div>`;
             }
 
@@ -749,20 +763,18 @@
             function updateCartDisplay() {
                 let totalQuantity = 0; let totalPrice = 0;
                 for (const cartKey in cart) { const item = cart[cartKey]; totalQuantity += item.quantity; totalPrice += item.price * item.quantity; }
-                cartQuantityEl.textContent = totalQuantity; cartTotalEl.textContent = `₹${totalPrice.toFixed(2)}`;
-                modalCartTotal.textContent = `₹${totalPrice.toFixed(2)}`; renderCartModal();
+                cartQuantityEl.textContent = totalQuantity;
+                cartTotalEl.textContent = `₹${totalPrice.toFixed(2)}`;
+                modalCartTotal.textContent = `₹${totalPrice.toFixed(2)}`;
+                renderCartModal();
                 cartQuantityEl.classList.add('cart-bubble');
-                cartTotalEl.classList.add('pop-price-effect');
-                setTimeout(() => {
-                    cartQuantityEl.classList.remove('cart-bubble');
-                    cartTotalEl.classList.remove('pop-price-effect');
-                }, 400);
+                setTimeout(() => cartQuantityEl.classList.remove('cart-bubble'), 300);
                 localStorage.setItem('guruSampoornaCart', JSON.stringify(cart));
             }
 
             function renderCartModal() {
                 if (Object.keys(cart).length === 0) { 
-                    cartItemsContainer.innerHTML = `<p class="text-gray-500 text-center" id="cart-empty-text">${translations[currentLang].cart_empty}</p>`; 
+                    cartItemsContainer.innerHTML = `<p class="text-gray-500 text-center">Your cart is empty.</p>`; 
                     return; 
                 }
                 cartItemsContainer.innerHTML = Object.entries(cart).map(([cartKey, item]) => `
@@ -783,6 +795,39 @@
                     </div>`).join('');
             }
             
+            function updateWishlistDisplay() {
+                wishlistCount.textContent = wishlist.length;
+                renderWishlistModal();
+                localStorage.setItem('guruSampoornaWishlist', JSON.stringify(wishlist));
+                document.querySelectorAll('.wishlist-btn').forEach(btn => {
+                    const productId = btn.dataset.productId;
+                    btn.classList.toggle('active', wishlist.includes(productId));
+                });
+            }
+
+            function renderWishlistModal() {
+                if (wishlist.length === 0) {
+                    wishlistItemsContainer.innerHTML = `<p class="text-gray-500 text-center">Your wishlist is empty.</p>`;
+                    return;
+                }
+                const allProducts = Object.values(productsData).flat();
+                wishlistItemsContainer.innerHTML = wishlist.map(productId => {
+                    const product = allProducts.find(p => p._id === productId);
+                    if (!product) return '';
+                    const image = (product.images && product.images.length > 0) ? product.images[0] : product.img;
+                    return `
+                        <div class="flex items-center justify-between py-3 border-b last:border-b-0">
+                             <img src="${image || 'https://placehold.co/100x100/ccc/999?text=Image'}" class="w-16 h-16 object-cover rounded-md">
+                            <div class="flex-1 ml-4">
+                                <p class="font-semibold">${product.name}</p>
+                            </div>
+                            <button class="remove-wishlist-item-btn text-gray-400 hover:text-red-500 p-1 ml-3" data-product-id="${product._id}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            </button>
+                        </div>`;
+                }).join('');
+            }
+
             // --- EVENT HANDLERS ---
             categoryContainer.addEventListener('click', (e) => {
                 if (e.target.classList.contains('category-btn')) {
@@ -799,8 +844,6 @@
             productGrid.addEventListener('click', (e) => {
                 const card = e.target.closest('.product-card'); if (!card) return;
                 const productId = card.dataset.productId;
-                const quantityInput = card.querySelector('.quantity-input');
-                const priceEl = card.querySelector('.product-price');
                 
                 let product;
                 for (const category of categories) {
@@ -808,46 +851,13 @@
                     if (found) { product = found; break; }
                 }
                 if (!product) return;
-
-                if (e.target.closest('.scroll-left') || e.target.closest('.scroll-right')) {
-                    let currentIdx = parseInt(card.dataset.currentImageIdx);
-                    const isLeft = e.target.closest('.scroll-left');
-                    const currentImages = JSON.parse(card.dataset.currentImages);
-                    const imageCount = currentImages.length;
-                    if (imageCount === 0) return;
-                    currentIdx = isLeft ? (currentIdx - 1 + imageCount) % imageCount : (currentIdx + 1) % imageCount;
-                    card.querySelector('.product-image').src = currentImages[currentIdx];
-                    card.dataset.currentImageIdx = currentIdx;
-                    return;
-                }
-
-                if (e.target.classList.contains('variant-btn')) {
-                    const button = e.target;
-                    card.querySelectorAll('.variant-btn').forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    const newPrice = parseFloat(button.dataset.price);
-                    quantityInput.value = 1; 
-                    priceEl.textContent = `₹${newPrice.toFixed(2)}`;
-
-                    const mainImages = JSON.parse(card.dataset.mainImages);
-                    const variantImages = JSON.parse(button.dataset.variantImages);
-                    const imagesToShow = (variantImages && variantImages.length > 0) ? variantImages : mainImages;
-                    
-                    updateCardGallery(card, imagesToShow);
-                    return;
-                }
-
-                if (e.target.classList.contains('plus-btn') || e.target.classList.contains('minus-btn')) {
-                    const currentVal = parseInt(quantityInput.value);
-                    quantityInput.value = e.target.classList.contains('plus-btn') ? currentVal + 1 : Math.max(1, currentVal - 1);
-                    let basePrice = product.price;
-                    if (product.variants && product.variants.length > 0) { basePrice = parseFloat(card.querySelector('.variant-btn.active').dataset.price); }
-                    priceEl.textContent = `₹${(basePrice * quantityInput.value).toFixed(2)}`;
-                }
-
-                if (e.target.classList.contains('add-to-cart-btn')) {
-                    const button = e.target;
-                    const quantity = parseInt(quantityInput.value);
+                
+                if (e.target.closest('.wishlist-btn')) {
+                    toggleWishlist(productId);
+                } else if(e.target.classList.contains('know-more-btn')) {
+                    showDetailsModal(product);
+                } else if (e.target.closest('.add-to-cart-btn')) {
+                    const quantity = parseInt(card.querySelector('.quantity-input').value);
                     if (product.variants && product.variants.length > 0) {
                         const activeVariant = card.querySelector('.variant-btn.active');
                         const size = activeVariant.dataset.size; const price = parseFloat(activeVariant.dataset.price);
@@ -860,8 +870,12 @@
                         else { cart[cartKey] = { productId: product._id, name: product.name, price: product.price, quantity: quantity }; }
                     }
                     updateCartDisplay();
-                    button.classList.add('flash-effect');
-                    setTimeout(() => button.classList.remove('flash-effect'), 600);
+                    e.target.closest('.add-to-cart-btn').classList.add('flash-effect');
+                    setTimeout(() => e.target.closest('.add-to-cart-btn').classList.remove('flash-effect'), 600);
+                } else if (e.target.classList.contains('plus-btn') || e.target.classList.contains('minus-btn')) {
+                    const quantityInput = card.querySelector('.quantity-input');
+                    const currentVal = parseInt(quantityInput.value);
+                    quantityInput.value = e.target.classList.contains('plus-btn') ? currentVal + 1 : Math.max(1, currentVal - 1);
                 }
             });
 
@@ -876,7 +890,7 @@
                     }
                     history.pushState({}, '', url);
                 } catch(e) {
-                    console.warn("Could not update URL. This might happen in restricted environments like sandboxed iframes.");
+                    console.warn("Could not update URL.");
                 }
             }
 
@@ -886,13 +900,13 @@
                 const categoryName = params.get('category');
                 
                 searchInput.value = searchTerm;
-
+                
                 if (searchTerm) {
                     document.getElementById('categories-section').classList.add('hidden');
                     productSectionTitle.classList.remove('hidden');
                     productSectionTitle.textContent = `Search results for "${searchTerm}"`;
-                    const allProducts = Object.values(productsData).flat().filter(p => p.inStock !== false);
-                    const filteredProducts = allProducts.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
+                    const allProductsForStore = Object.values(productsData).flat();
+                    const filteredProducts = allProductsForStore.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
                     renderProducts(filteredProducts);
                 } else {
                     document.getElementById('categories-section').classList.remove('hidden');
@@ -901,8 +915,7 @@
                         btn.classList.toggle('active', btn.textContent.trim() === categoryName);
                     });
                     const productsForCategory = productsData[categoryName] || [];
-                    const visibleProducts = productsForCategory.filter(p => p.inStock !== false);
-                    renderProducts(visibleProducts);
+                    renderProducts(productsForCategory);
                 }
             }
             
@@ -973,7 +986,7 @@
             }
 
             cartIconBtn.addEventListener('click', () => showModal(cartModal));
-            closeModalBtn.addEventListener('click', () => hideModal(cartModal));
+            closeCartModalBtn.addEventListener('click', () => hideModal(cartModal));
             cartModal.addEventListener('click', (e) => { if (e.target === cartModal) hideModal(cartModal); });
             orderNowBtn.addEventListener('click', handleOrderNow);
             
@@ -1006,6 +1019,39 @@
                 }
             });
 
+            // --- WISHLIST LOGIC ---
+            function toggleWishlist(productId) {
+                const index = wishlist.indexOf(productId);
+                if (index > -1) {
+                    wishlist.splice(index, 1);
+                } else {
+                    wishlist.push(productId);
+                }
+                updateWishlistDisplay();
+            }
+
+            wishlistIconBtn.addEventListener('click', () => showModal(wishlistModal));
+            closeWishlistModalBtn.addEventListener('click', () => hideModal(wishlistModal));
+            wishlistModal.addEventListener('click', (e) => { if(e.target === wishlistModal) hideModal(wishlistModal) });
+            wishlistItemsContainer.addEventListener('click', (e) => {
+                const removeBtn = e.target.closest('.remove-wishlist-item-btn');
+                if(removeBtn) {
+                    toggleWishlist(removeBtn.dataset.productId);
+                }
+            });
+
+            // --- DETAILS MODAL ---
+            function showDetailsModal(product) {
+                const image = (product.images && product.images.length > 0) ? product.images[0] : product.img;
+                detailsModalTitle.textContent = product.name;
+                detailsModalImg.src = image || 'https://placehold.co/400x400/ccc/999?text=Image+Not+Found';
+                detailsModalDesc.textContent = product.description || 'No description available.';
+                showModal(detailsModal);
+            }
+            closeDetailsModalBtn.addEventListener('click', () => hideModal(detailsModal));
+            detailsModal.addEventListener('click', (e) => { if(e.target === detailsModal) hideModal(detailsModal) });
+
+
             // --- ADMIN PAGE LOGIC & AUTH ---
             function loadAdminPassword() {
                 const storedPassword = localStorage.getItem('guruSampoornaAdminPassword');
@@ -1019,61 +1065,6 @@
                 ADMIN_PASSWORD = newPassword;
             }
             
-            async function toggleStockStatus(productId, currentStockStatus) {
-                const button = document.querySelector(`.toggle-stock-btn[data-product-id="${productId}"]`);
-                if (button) button.disabled = true;
-
-                try {
-                    let productToUpdate = null;
-                    let categoryOfProduct = null;
-
-                    for (const categoryName in productsData) {
-                        const foundProduct = productsData[categoryName].find(p => p._id === productId);
-                        if (foundProduct) {
-                            productToUpdate = { ...foundProduct };
-                            categoryOfProduct = categoryName;
-                            break;
-                        }
-                    }
-
-                    if (!productToUpdate) {
-                        throw new Error("Product not found locally.");
-                    }
-
-                    const payload = { ...productToUpdate, inStock: !currentStockStatus };
-                    delete payload._id;
-                    delete payload.__v;
-                    
-                    const response = await fetch(`${API_URL}/products/${productId}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        const errData = await response.json().catch(() => ({}));
-                        throw new Error(errData.message || `Server error while updating product.`);
-                    }
-                    
-                    const updatedProductFromServer = await response.json();
-                    
-                    const productIndex = productsData[categoryOfProduct].findIndex(p => p._id === productId);
-                    if (productIndex !== -1) {
-                        productsData[categoryOfProduct][productIndex] = updatedProductFromServer;
-                    }
-                    
-                    renderAdminProductList();
-                    showInfoModal(`Product stock status updated successfully!`);
-
-                } catch (error) {
-                    console.error('Failed to toggle stock status:', error);
-                    showInfoModal(`Error updating stock status: ${error.message}`);
-                } finally {
-                    if (button) button.disabled = false;
-                }
-            }
-
-
             openAdminBtn.addEventListener('click', () => showModal(passwordModal));
             passwordCancelBtn.addEventListener('click', () => hideModal(passwordModal));
             passwordModal.addEventListener('click', e => { if (e.target === passwordModal) hideModal(passwordModal); });
@@ -1126,7 +1117,7 @@
                 productIdInput.value = '';
                 variantsContainer.innerHTML = '';
                 imagePreviewContainer.innerHTML = '';
-                newProductImageFiles = []; // Clear the file storage array
+                newProductImageFiles = [];
                 formTitle.textContent = 'Add New Product';
                 formSubtitle.textContent = 'Fill in the details for the new product.';
                 formSubmitBtn.textContent = 'Save Product';
@@ -1162,20 +1153,15 @@
                     } else {
                         html += `<div class="space-y-4">`;
                         productsInCategory.forEach(product => {
-                            const isInStock = product.inStock !== false;
                             html += `
                                 <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
                                     <div class="flex items-start gap-4 flex-1">
                                         <img src="${(product.variants && product.variants.length > 0 ? (product.variants[0].images?.[0] || product.variants[0].image) : (product.images?.[0] || product.img)) || 'https://placehold.co/100x100/ccc/999?text=Image'}" onerror="this.src='https://placehold.co/100x100/ccc/999?text=Image'" class="w-16 h-16 object-cover rounded-md">
                                         <div>
                                             <p class="font-bold text-gray-800">${product.name}</p>
-                                            <p class="text-sm text-gray-500">${product.variants && product.variants.length > 0 ? product.variants.map(v => `${v.size} (₹${v.price})`).join(', ') : `₹${product.price}`}</p>
                                         </div>
                                     </div>
                                     <div class="flex gap-2 items-center">
-                                        <button class="toggle-stock-btn stock-btn ${isInStock ? 'in-stock' : 'out-of-stock'}" data-product-id="${product._id}" data-is-in-stock="${isInStock}" title="${isInStock ? 'Mark as Out of Stock' : 'Mark as In Stock'}">
-                                            NS
-                                        </button>
                                         <button class="edit-product-btn text-blue-500 hover:text-blue-700 font-semibold text-sm" data-product-id="${product._id}">Edit</button>
                                         <button class="delete-product-btn text-red-500 hover:text-red-700 font-semibold text-sm" data-product-id="${product._id}" data-product-name="${product.name}">Remove</button>
                                     </div>
@@ -1203,10 +1189,11 @@
                 categorySelect.value = product.category;
                 
                 const existingImages = (product.images || [product.img] || []).filter(Boolean);
-                imagePreviewContainer.innerHTML = existingImages.map(imgUrl => createImagePreview(imgUrl, null)).join(''); // Existing images don't have a fileId
+                imagePreviewContainer.innerHTML = existingImages.map(imgUrl => createImagePreview(imgUrl, null)).join('');
 
                 if (product.variants && product.variants.length > 0) {
                     product.variants.forEach(variant => addVariantInput(variant));
+                    document.getElementById('product-price').value = '';
                 } else {
                     document.getElementById('product-price').value = product.price || '';
                 }
@@ -1231,11 +1218,6 @@
                     if (productToEdit) {
                         populateEditForm(productToEdit);
                     }
-                } else if (target.closest('.toggle-stock-btn')) {
-                    const button = target.closest('.toggle-stock-btn');
-                    const { productId } = button.dataset;
-                    const currentStockStatus = button.dataset.isInStock === 'true';
-                    toggleStockStatus(productId, currentStockStatus);
                 }
             });
             
@@ -1273,18 +1255,19 @@
 
             function addVariantInput(variant = {}) {
                 const { size = '', price = '', images = [] } = variant;
-                // Support old single-image format
                 const imageList = images.length > 0 ? images : (variant.image ? [variant.image] : []);
 
                 const uniqueId = `variant-input-${Date.now()}-${Math.random()}`;
                 const variantDiv = document.createElement('div');
                 variantDiv.className = 'variant-row-wrapper border-t pt-4';
                 variantDiv.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <input type="text" placeholder="Size (e.g., 1 Lt)" class="variant-size w-full border-gray-300 rounded-md shadow-sm sm:text-sm" value="${size}" required>
-                        <input type="number" placeholder="Price" step="0.01" class="variant-price w-full border-gray-300 rounded-md shadow-sm sm:text-sm" value="${price}" required>
-                        <button type="button" class="remove-variant-btn text-red-500 p-1 rounded-full hover:bg-red-100 font-bold text-xl flex-shrink-0">&times;</button>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" placeholder="Size (e.g., 1 Lt)" class="variant-size col-span-1 border-gray-300 rounded-md shadow-sm sm:text-sm" value="${size}" required>
+                        <input type="number" placeholder="Price" step="0.01" class="variant-price col-span-1 border-gray-300 rounded-md shadow-sm sm:text-sm" value="${price}" required>
                     </div>
+                     <div class="flex items-center justify-end">
+                          <button type="button" class="remove-variant-btn text-red-500 p-1 rounded-full hover:bg-red-100 font-bold text-xl flex-shrink-0">&times;</button>
+                     </div>
                     <div class="mt-2 pl-1">
                         <label class="block text-xs font-medium text-gray-600 mb-2">Variant Images</label>
                         <div class="variant-image-preview-container mt-2 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
@@ -1324,7 +1307,6 @@
                             const newPreview = document.createElement('div');
                             newPreview.className = 'relative new-variant-image';
                             newPreview.innerHTML = createImagePreview(event.target.result, '');
-                            // Store the File object on the DOM element for later retrieval
                             newPreview.querySelector('img').file = file;
                             previewContainer.appendChild(newPreview);
                         }
@@ -1347,8 +1329,8 @@
                 const files = e.target.files;
                 Array.from(files).forEach(file => {
                     const fileId = `file-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-                    file.id = fileId; // Attach a unique ID to the file object itself
-                    newProductImageFiles.push(file); // Store the actual File object
+                    file.id = fileId;
+                    newProductImageFiles.push(file);
 
                     const reader = new FileReader();
                     reader.onload = (event) => {
@@ -1356,7 +1338,7 @@
                     }
                     reader.readAsDataURL(file);
                 });
-                imageUploadInput.value = ''; // Clear input
+                imageUploadInput.value = '';
             });
 
             imagePreviewContainer.addEventListener('click', e => {
@@ -1414,7 +1396,6 @@
 
                         variants.push({ size, price, images: existingVariantImages });
 
-                        // Find newly added variant images and append them with an indexed key
                         row.querySelectorAll('.new-variant-image img').forEach(imgEl => {
                             if (imgEl.file) {
                                 formData.append(`variant_images_${index}`, imgEl.file);
@@ -1491,10 +1472,9 @@
                 changePasswordForm.reset();
             });
             
-            // --- CATEGORY ARRANGEMENT ---
             function renderCategoryArrangementList() {
                 categoryList.innerHTML = categories.map(cat => `
-                    <div class="draggable-category bg-white p-3 rounded-lg shadow-sm flex items-center justify-between" draggable="true" data-category-name="${cat.name}">
+                    <div class="draggable-category bg-white p-3 rounded-lg shadow-sm flex items-center justify-between" draggable="true" data-category-id="${cat._id}">
                         <span>${cat.name}</span>
                         <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                     </div>
@@ -1534,57 +1514,34 @@
 
             saveCategoryOrderBtn.addEventListener('click', async () => {
                 const orderedCategoryNodes = [...categoryList.querySelectorAll('.draggable-category')];
-                const orderedCategories = orderedCategoryNodes.map(node => node.dataset.categoryName);
+                const orderedCategoryIds = orderedCategoryNodes.map(node => node.dataset.categoryId);
                 
                 try {
                     const response = await fetch(`${API_URL}/categories/order`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ orderedCategories })
+                        body: JSON.stringify({ orderedCategories: orderedCategoryIds })
                     });
-                    if (!response.ok) throw new Error('Failed to save order');
+                    if (!response.ok) {
+                         const errorData = await response.json().catch(() => ({ message: 'Failed to save order' }));
+                        throw new Error(errorData.message);
+                    }
                     
                     categoryOrderMessage.textContent = 'Order saved successfully!';
                     categoryOrderMessage.classList.add('text-green-500');
                     setTimeout(() => categoryOrderMessage.textContent = '', 2000);
-                    await initStoreView(); // Refresh all data to reflect new order
+                    await initStoreView();
                 } catch (error) {
                     console.error('Failed to save category order:', error);
-                    categoryOrderMessage.textContent = 'Error saving order.';
+                    categoryOrderMessage.textContent = `Error: ${error.message}`;
                     categoryOrderMessage.classList.add('text-red-500');
-                    setTimeout(() => categoryOrderMessage.textContent = '', 2000);
+                    setTimeout(() => {
+                        categoryOrderMessage.textContent = '';
+                        categoryOrderMessage.classList.remove('text-red-500');
+                    }, 3000);
                 }
             });
-
-            // --- LANGUAGE SWITCHER ---
-            function applyTranslations(lang) {
-                const t = translations[lang];
-                document.getElementById('search-input').placeholder = t.search_placeholder;
-                document.getElementById('cart-items-text').textContent = t.items;
-                document.getElementById('explore-categories-title').textContent = t.explore_categories;
-                document.getElementById('order-info-banner').querySelector('p').textContent = t.order_info;
-                document.getElementById('shopping-cart-title').textContent = t.shopping_cart;
-                
-                const cartEmptyEl = document.getElementById('cart-empty-text');
-                if (cartEmptyEl) cartEmptyEl.textContent = t.cart_empty;
-
-                document.getElementById('total-text').textContent = t.total;
-                document.getElementById('order-now-text').textContent = t.order_now;
-                document.getElementById('footer-text').innerHTML = t.footer_copyright;
-                document.getElementById('admin-panel-title').textContent = t.admin_panel;
-                document.getElementById('back-to-store-btn').childNodes[1].nodeValue = ` ${t.back_to_store}`;
-
-                langSwitcherBtn.textContent = lang === 'en' ? 'हि' : 'EN';
-            }
-
-            langSwitcherBtn.addEventListener('click', () => {
-                currentLang = currentLang === 'en' ? 'hi' : 'en';
-                localStorage.setItem('guruSampoornaLang', currentLang);
-                applyTranslations(currentLang);
-            });
-
-
-            // --- INITIALIZATION ---
+            
             async function initStoreView() {
                 loadAdminPassword();
                 loadingIndicator.classList.remove('hidden');
@@ -1605,7 +1562,6 @@
                     
                     categories = categoryList;
                     
-                    // productsData should contain ALL products for the admin panel to work correctly
                     productsData = flatProductList.reduce((acc, product) => {
                         const category = product.category;
                         if (!acc[category]) { acc[category] = []; }
@@ -1624,11 +1580,13 @@
                 
                 const savedCart = localStorage.getItem('guruSampoornaCart');
                 cart = savedCart ? JSON.parse(savedCart) : {};
+                const savedWishlist = localStorage.getItem('guruSampoornaWishlist');
+                wishlist = savedWishlist ? JSON.parse(savedWishlist) : [];
 
                 updateCartDisplay(); 
+                updateWishlistDisplay();
                 
                 renderCategories();
-                applyTranslations(currentLang);
                 
                 const params = new URLSearchParams(window.location.search);
                 const categoryParam = params.get('category');
@@ -1642,7 +1600,7 @@
                     productGrid.innerHTML = `<p class="text-center text-gray-500 col-span-full">No products found. Add some in the admin panel!</p>`;
                 }
 
-                [cartModal, passwordModal, confirmModal, infoModal].forEach(modal => {
+                [cartModal, passwordModal, confirmModal, infoModal, wishlistModal, detailsModal].forEach(modal => {
                       modal.classList.add('opacity-0');
                       modal.querySelector('.modal-content').classList.add('scale-95');
                 });
@@ -1653,4 +1611,5 @@
     </script>
 </body>
 </html>
+
 
