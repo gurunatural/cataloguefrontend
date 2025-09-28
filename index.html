@@ -668,37 +668,19 @@
             const infoModalMessage = document.getElementById('info-modal-message');
             const infoModalOkBtn = document.getElementById('info-modal-ok-btn');
             
-            
-            // --- RENDER FUNCTIONS ---
-            function updateCardGallery(card, images) {
-                const imageContainer = card.querySelector('.relative.mb-4');
-                if (!imageContainer) return;
-
-                const newImages = images || [];
-                card.dataset.currentImages = JSON.stringify(newImages);
-                card.dataset.currentImageIdx = 0;
-
-                const mainImage = imageContainer.querySelector('.product-image');
-                if (mainImage) {
-                    mainImage.src = newImages.length > 0 ? newImages[0] : 'https://placehold.co/400x400/ccc/999?text=Image+Not+Found';
+            // --- HELPER FUNCTIONS ---
+            function transformCloudinaryUrl(url, transformations = 'w_400,q_auto,f_auto') {
+                if (!url || !url.includes('cloudinary.com')) {
+                    return url || 'https://placehold.co/400x400/ccc/999?text=Image+Not+Found';
                 }
-
-                imageContainer.querySelectorAll('.scroll-btn').forEach(btn => btn.remove());
-
-                if (newImages.length > 1) {
-                    const leftBtn = document.createElement('div');
-                    leftBtn.className = 'scroll-btn left scroll-left';
-                    leftBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>`;
-                    
-                    const rightBtn = document.createElement('div');
-                    rightBtn.className = 'scroll-btn right scroll-right';
-                    rightBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>`;
-                    
-                    imageContainer.appendChild(leftBtn);
-                    imageContainer.appendChild(rightBtn);
+                const parts = url.split('/upload/');
+                if (parts.length !== 2) {
+                    return url;
                 }
+                return `${parts[0]}/upload/${transformations}/${parts[1]}`;
             }
-            
+
+            // --- RENDER FUNCTIONS ---
             function renderProductCard(product) {
                 const productId = product._id;
                 const mainImages = product.images || [product.img].filter(Boolean);
@@ -714,7 +696,7 @@
                     return `
                         <div class="product-card p-5 flex flex-col" data-product-id="${productId}" data-main-images='${JSON.stringify(mainImages)}' data-current-images='${JSON.stringify(initialImages)}' data-current-image-idx="0">
                             <div class="relative mb-4">
-                                <img src="${initialImage}" onerror="this.src='https://placehold.co/400x400/ccc/999?text=Image+Not+Found'" alt="${product.name}" class="product-image w-full aspect-square object-cover rounded-lg">
+                                <img src="${transformCloudinaryUrl(initialImage)}" onerror="this.src='https://placehold.co/400x400/ccc/999?text=Image+Not+Found'" alt="${product.name}" class="product-image w-full aspect-square object-cover rounded-lg">
                                 <button class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-product-id="${productId}">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                       <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.5l1.318-1.182a4.5 4.5 0 116.364 6.364L12 18.75l-7.682-7.682a4.5 4.5 0 010-6.364z" />
@@ -749,7 +731,7 @@
                 return `
                     <div class="product-card p-5 flex flex-col" data-product-id="${productId}">
                         <div class="relative mb-4">
-                            <img src="${mainImages[0] || 'https://placehold.co/400x400/ccc/999?text=Image+Not+Found'}" onerror="this.src='https://placehold.co/400x400/ccc/999?text=Image+Not+Found'" alt="${product.name}" class="w-full aspect-square object-cover rounded-lg">
+                            <img src="${transformCloudinaryUrl(mainImages[0])}" onerror="this.src='https://placehold.co/400x400/ccc/999?text=Image+Not+Found'" alt="${product.name}" class="w-full aspect-square object-cover rounded-lg">
                              <button class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-product-id="${productId}">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                   <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.5l1.318-1.182a4.5 4.5 0 116.364 6.364L12 18.75l-7.682-7.682a4.5 4.5 0 010-6.364z" />
@@ -790,14 +772,25 @@
             }
             
             function updateCartDisplay() {
-                let totalQuantity = 0; let totalPrice = 0;
-                for (const cartKey in cart) { const item = cart[cartKey]; totalQuantity += item.quantity; totalPrice += item.price * item.quantity; }
+                let totalQuantity = 0;
+                let totalPrice = 0;
+                for (const cartKey in cart) {
+                    const item = cart[cartKey];
+                    totalQuantity += item.quantity;
+                    totalPrice += item.price * item.quantity;
+                }
                 cartQuantityEl.textContent = totalQuantity;
                 cartTotalEl.textContent = `₹${totalPrice.toFixed(2)}`;
                 modalCartTotal.textContent = `₹${totalPrice.toFixed(2)}`;
                 renderCartModal();
+
                 cartQuantityEl.classList.add('cart-bubble');
-                setTimeout(() => cartQuantityEl.classList.remove('cart-bubble'), 300);
+                cartTotalEl.classList.add('pop-price-effect');
+                setTimeout(() => {
+                    cartQuantityEl.classList.remove('cart-bubble');
+                    cartTotalEl.classList.remove('pop-price-effect');
+                }, 400); 
+
                 localStorage.setItem('guruSampoornaCart', JSON.stringify(cart));
             }
 
@@ -846,7 +839,7 @@
                     const image = (product.images && product.images.length > 0) ? product.images[0] : product.img;
                     return `
                         <div class="flex items-center justify-between py-3 border-b last:border-b-0">
-                             <img src="${image || 'https://placehold.co/100x100/ccc/999?text=Image'}" class="w-16 h-16 object-cover rounded-md">
+                             <img src="${transformCloudinaryUrl(image, 'w_100,q_auto,f_auto')}" class="w-16 h-16 object-cover rounded-md">
                             <div class="flex-1 ml-4">
                                 <p class="font-semibold">${product.name}</p>
                             </div>
@@ -873,8 +866,6 @@
             productGrid.addEventListener('click', (e) => {
                 const card = e.target.closest('.product-card'); if (!card) return;
                 const productId = card.dataset.productId;
-                const quantityInput = card.querySelector('.quantity-input');
-                const priceEl = card.querySelector('.product-price');
                 
                 let product;
                 for (const category of categories) {
@@ -890,6 +881,7 @@
                 } else if (target.classList.contains('know-more-btn')) {
                     showDetailsModal(product);
                 } else if (target.closest('.add-to-cart-btn')) {
+                    const quantityInput = card.querySelector('.quantity-input');
                     const quantity = parseInt(quantityInput.value);
                     if (product.variants && product.variants.length > 0) {
                         const activeVariant = card.querySelector('.variant-btn.active');
@@ -906,9 +898,12 @@
                     target.closest('.add-to-cart-btn').classList.add('flash-effect');
                     setTimeout(() => target.closest('.add-to-cart-btn').classList.remove('flash-effect'), 600);
                 } else if (target.classList.contains('plus-btn') || target.classList.contains('minus-btn')) {
+                    const quantityInput = card.querySelector('.quantity-input');
                     const currentVal = parseInt(quantityInput.value);
                     quantityInput.value = target.classList.contains('plus-btn') ? currentVal + 1 : Math.max(1, currentVal - 1);
                 } else if (target.classList.contains('variant-btn')) {
+                    const quantityInput = card.querySelector('.quantity-input');
+                    const priceEl = card.querySelector('.product-price');
                     card.querySelectorAll('.variant-btn').forEach(btn => btn.classList.remove('active'));
                     target.classList.add('active');
                     const newPrice = parseFloat(target.dataset.price);
@@ -926,7 +921,7 @@
                     const imageCount = currentImages.length;
                     if (imageCount === 0) return;
                     currentIdx = isLeft ? (currentIdx - 1 + imageCount) % imageCount : (currentIdx + 1) % imageCount;
-                    card.querySelector('.product-image').src = currentImages[currentIdx];
+                    card.querySelector('.product-image').src = transformCloudinaryUrl(currentImages[currentIdx]);
                     card.dataset.currentImageIdx = currentIdx;
                 }
             });
@@ -1097,7 +1092,7 @@
             function showDetailsModal(product) {
                 const image = (product.images && product.images.length > 0) ? product.images[0] : product.img;
                 detailsModalTitle.textContent = product.name;
-                detailsModalImg.src = image || 'https://placehold.co/400x400/ccc/999?text=Image+Not+Found';
+                detailsModalImg.src = transformCloudinaryUrl(image, 'w_600,q_auto,f_auto') || 'https://placehold.co/400x400/ccc/999?text=Image+Not+Found';
                 detailsModalDesc.textContent = product.description || 'No description available.';
                 showModal(detailsModal);
             }
@@ -1209,7 +1204,7 @@
                             html += `
                                 <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
                                     <div class="flex items-start gap-4 flex-1">
-                                        <img src="${(product.variants && product.variants.length > 0 ? (product.variants[0].images?.[0] || product.variants[0].image) : (product.images?.[0] || product.img)) || 'https://placehold.co/100x100/ccc/999?text=Image'}" onerror="this.src='https://placehold.co/100x100/ccc/999?text=Image'" class="w-16 h-16 object-cover rounded-md">
+                                        <img src="${transformCloudinaryUrl((product.variants && product.variants.length > 0 ? (product.variants[0].images?.[0] || product.variants[0].image) : (product.images?.[0] || product.img)), 'w_100,q_auto,f_auto')}"  class="w-16 h-16 object-cover rounded-md">
                                         <div>
                                             <p class="font-bold text-gray-800">${product.name}</p>
                                         </div>
