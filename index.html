@@ -298,12 +298,13 @@
                 </div>
 
                 <div class="flex-1 flex justify-end items-center gap-4">
-                    <button id="cart-icon-btn" class="flex items-center space-x-2 cursor-pointer">
+                    <button id="cart-icon-btn" class="relative flex items-center space-x-2 cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
+                        <span id="cart-quantity-bubble" class="absolute -top-2 -left-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
                         <div class="text-gray-700 text-sm hidden sm:block">
-                            <span id="cart-quantity" class="font-bold">0</span> items | 
+                            <span id="cart-quantity-text">0</span> items | 
                             <span id="cart-total" class="font-bold">₹0.00</span>
                         </div>
                     </button>
@@ -336,7 +337,7 @@
         </main>
         
         <footer class="text-center py-8 mt-12 border-t border-gray-200">
-            <p class="text-gray-500">&copy; ${new Date().getFullYear()} Guru Sampoorna. All rights reserved.</p>
+            <p id="footer-text" class="text-gray-500"></p>
         </footer>
     </div>
 
@@ -599,7 +600,8 @@
             const categoryContainer = document.getElementById('category-container');
             const productGrid = document.getElementById('product-grid');
             const productSectionTitle = document.getElementById('product-section-title');
-            const cartQuantityEl = document.getElementById('cart-quantity');
+            const cartQuantityBubble = document.getElementById('cart-quantity-bubble');
+            const cartQuantityText = document.getElementById('cart-quantity-text');
             const cartTotalEl = document.getElementById('cart-total');
             const searchIcon = document.getElementById('search-icon');
             const searchInput = document.getElementById('search-input');
@@ -779,15 +781,16 @@
                     totalQuantity += item.quantity;
                     totalPrice += item.price * item.quantity;
                 }
-                cartQuantityEl.textContent = totalQuantity;
+                cartQuantityBubble.textContent = totalQuantity;
+                cartQuantityText.textContent = totalQuantity;
                 cartTotalEl.textContent = `₹${totalPrice.toFixed(2)}`;
                 modalCartTotal.textContent = `₹${totalPrice.toFixed(2)}`;
                 renderCartModal();
 
-                cartQuantityEl.classList.add('cart-bubble');
+                cartQuantityBubble.classList.add('cart-bubble');
                 cartTotalEl.classList.add('pop-price-effect');
                 setTimeout(() => {
-                    cartQuantityEl.classList.remove('cart-bubble');
+                    cartQuantityBubble.classList.remove('cart-bubble');
                     cartTotalEl.classList.remove('pop-price-effect');
                 }, 400); 
 
@@ -1633,6 +1636,7 @@
 
                 updateCartDisplay(); 
                 updateWishlistDisplay();
+                document.getElementById('footer-text').innerHTML = `&copy; ${new Date().getFullYear()} Guru Sampoorna. All rights reserved.`;
                 
                 renderCategories();
                 
