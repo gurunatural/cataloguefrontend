@@ -131,40 +131,6 @@
             background-color: #F0F5EE;
         }
         
-        /* Hide file input */
-        .hidden-file-input {
-            width: 0.1px;
-            height: 0.1px;
-            opacity: 0;
-            overflow: hidden;
-            position: absolute;
-            z-index: -1;
-        }
-
-        /* Image Preview Delete Button */
-        .image-delete-btn {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background-color: rgba(220, 38, 38, 0.9);
-            color: white;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-weight: bold;
-            line-height: 1;
-            border: 2px solid white;
-            transition: all 0.2s ease;
-        }
-        .image-delete-btn:hover {
-            background-color: #DC2626;
-            transform: scale(1.1);
-        }
-        
         /* Loading Spinner */
         .loading-dots span {
             animation: blink 1.4s infinite both;
@@ -267,6 +233,7 @@
     <!-- End Meta Pixel Code -->
 </head>
 <body class="text-gray-800">
+    <!-- Loading Indicator -->
     <div id="loading-indicator" class="fixed inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50">
         <div class="loading-dots flex gap-2">
             <span class="w-3 h-6 bg-gray-300 rounded-full"></span>
@@ -275,6 +242,7 @@
         </div>
     </div>
 
+    <!-- Main Store Page -->
     <div id="store-page" class="hidden">
         <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-40 shadow-sm">
             <nav class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
@@ -297,16 +265,14 @@
                     <input type="text" id="search-input" class="w-full max-w-xs sm:max-w-sm hidden border-gray-300 rounded-full px-4 py-1.5 focus:ring-2 focus:ring-[#86A873] focus:border-[#86A873] transition-all duration-300" placeholder="Search for products...">
                 </div>
 
-                <div class="flex-1 flex justify-end items-center">
-                    <button id="cart-icon-btn" class="relative flex items-center space-x-1 cursor-pointer">
-                        <div class="relative">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                            <span id="cart-quantity-bubble" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
-                        </div>
-                        <div class="text-gray-700 text-sm">
-                            <span class="hidden sm:inline"><span id="cart-quantity-text">0</span> items | </span>
+                <div class="flex-1 flex justify-end items-center gap-4">
+                    <button id="cart-icon-btn" class="relative flex items-center space-x-2 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <span id="cart-quantity-bubble" class="absolute -top-2 -left-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                        <div class="text-gray-700 text-sm hidden sm:block">
+                            <span id="cart-quantity-text">0</span> items | 
                             <span id="cart-total" class="font-bold">₹0.00</span>
                         </div>
                     </button>
@@ -318,6 +284,7 @@
             <section id="categories-section" class="mb-12">
                 <h2 class="text-2xl font-serif text-center mb-6 text-gray-700">Explore Our Categories</h2>
                 <div id="category-container" class="flex flex-wrap justify-center gap-3">
+                    <!-- Category buttons rendered here -->
                 </div>
             </section>
 
@@ -334,6 +301,7 @@
                 </div>
 
                 <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                    <!-- Product cards rendered here -->
                 </div>
             </section>
         </main>
@@ -343,7 +311,7 @@
         </footer>
     </div>
 
-
+    <!-- Shopping Cart Modal -->
     <div id="cart-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md m-4 transform scale-95">
             <div class="flex justify-between items-center p-4 border-b">
@@ -359,10 +327,13 @@
             </div>
             <div class="p-4 bg-gray-50 rounded-b-lg">
                 <div class="flex justify-between items-center mb-4">
-                    <span class="text-lg font-semibold text-gray-700">Total:</span>
+                     <div>
+                        <span class="text-lg font-semibold text-gray-700">Total:</span>
+                        <button id="clear-cart-btn" class="text-xs text-red-500 hover:text-red-700 font-medium ml-2 disabled:text-gray-400 disabled:cursor-not-allowed">Clear Cart</button>
+                     </div>
                     <span id="modal-cart-total" class="text-xl font-bold text-[#4A6C4A]">₹0.00</span>
                 </div>
-                <button id="order-now-btn" class="w-full bg-[#4A6C4A] hover:bg-[#3B563B] text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                <button id="order-now-btn" class="w-full bg-[#4A6C4A] hover:bg-[#3B563B] text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18H3c-.6 0-1-.4-1-1V7c0-.6.4-1 1-1h10c.6 0 1 .4 1 1v11"/><path d="M14 9h4l4 4v4c0 .6-.4 1-1 1h-2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
                     <span>Order Now</span>
                 </button>
@@ -370,6 +341,7 @@
         </div>
     </div>
 
+    <!-- Wishlist Modal -->
     <div id="wishlist-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md m-4 transform scale-95">
             <div class="flex justify-between items-center p-4 border-b">
@@ -384,6 +356,7 @@
         </div>
     </div>
     
+    <!-- Product Details Modal -->
     <div id="details-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-lg m-4 transform scale-95">
              <div class="flex justify-between items-center p-4 border-b">
@@ -403,6 +376,7 @@
         </div>
     </div>
     
+    <!-- Admin Button -->
     <button id="open-admin-btn" class="control-btn">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -410,6 +384,7 @@
         </svg>
     </button>
     
+    <!-- Admin Panel -->
     <div id="admin-page" class="hidden fixed inset-0 bg-gray-50 z-50 overflow-y-auto">
         <header class="bg-white shadow-sm sticky top-0">
             <div class="container mx-auto px-6 py-4 flex justify-between items-center">
@@ -422,7 +397,7 @@
         </header>
         <main class="container mx-auto px-6 py-8">
             <div class="border-b border-gray-200 mb-6">
-                <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                <nav class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
                     <button id="manage-tab-btn" class="admin-tab-btn active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Manage Products</button>
                     <button id="add-tab-btn" class="admin-tab-btn text-gray-500 hover:text-gray-700 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent">Add Product</button>
                     <button id="arrange-tab-btn" class="admin-tab-btn text-gray-500 hover:text-gray-700 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent">Arrange Categories</button>
@@ -432,6 +407,12 @@
             </div>
 
             <div id="manage-products-content">
+                 <div class="mb-4">
+                    <input type="text" id="admin-product-search" placeholder="Search products to edit..." class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div id="admin-product-list-container">
+                    <!-- Admin Product list will be rendered here -->
+                </div>
             </div>
 
             <div id="add-product-content" class="hidden">
@@ -455,17 +436,6 @@
                             <div>
                                 <label for="product-description" class="block text-sm font-medium text-gray-700">Description</label>
                                 <textarea name="description" id="product-description" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm sm:text-sm"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Main Images</label>
-                                <div class="mt-2">
-                                    <input type="file" name="images" id="image-upload-input" multiple accept="image/png, image/jpeg" class="hidden-file-input">
-                                    <label for="image-upload-input" class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
-                                        Upload New Main Images
-                                    </label>
-                                </div>
-                                <div id="image-preview-container" class="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4"></div>
                             </div>
                             <div class="border-t border-gray-200 pt-6">
                                 <h4 class="text-md font-medium text-gray-800 mb-2">Product Variants</h4>
@@ -494,6 +464,7 @@
                         <p class="mt-1 text-sm text-gray-500">Drag and drop the categories to change their display order on the store page.</p>
                     </div>
                     <div id="category-list" class="mt-6 space-y-2">
+                        <!-- Draggable category list rendered here -->
                     </div>
                     <div class="pt-5 flex justify-between items-center">
                         <p id="category-order-message" class="text-sm font-medium h-5"></p>
@@ -534,6 +505,7 @@
         </main>
     </div>
     
+    <!-- Password Modal -->
     <div id="password-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-sm m-4 transform scale-95">
             <div class="p-6">
@@ -549,6 +521,7 @@
         </div>
     </div>
     
+    <!-- Confirmation Modal -->
     <div id="confirm-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-sm m-4 transform scale-95">
             <div class="p-6">
@@ -585,15 +558,19 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // --- CONFIG ---
-            const API_URL = 'https://gurunatural.onrender.com/api';
-            let ADMIN_PASSWORD = 'Govind@123#';
+            const StoreSettings = {
+                API_URL: 'https://gurunatural.onrender.com/api',
+                WHATSAPP_NUMBER: '916262120120',
+                STORE_NAME: 'Guru Sampoorna',
+                DEFAULT_ADMIN_PASSWORD: 'Govind@123#',
+            };
+            let ADMIN_PASSWORD = StoreSettings.DEFAULT_ADMIN_PASSWORD;
 
             // --- DATA STORE ---
             let productsData = {};
             let categories = [];
             let cart = {};
             let wishlist = [];
-            let newProductImageFiles = [];
 
             // --- DOM ELEMENTS ---
             const loadingIndicator = document.getElementById('loading-indicator');
@@ -614,6 +591,7 @@
             const cartItemsContainer = document.getElementById('cart-items-container');
             const modalCartTotal = document.getElementById('modal-cart-total');
             const orderNowBtn = document.getElementById('order-now-btn');
+            const clearCartBtn = document.getElementById('clear-cart-btn');
             
             const wishlistModal = document.getElementById('wishlist-modal');
             const closeWishlistModalBtn = document.getElementById('close-wishlist-modal-btn');
@@ -641,6 +619,8 @@
             const arrangeTabBtn = document.getElementById('arrange-tab-btn');
             const settingsTabBtn = document.getElementById('settings-tab-btn');
             const manageProductsContent = document.getElementById('manage-products-content');
+            const adminProductSearch = document.getElementById('admin-product-search');
+            const adminProductListContainer = document.getElementById('admin-product-list-container');
             const addProductContent = document.getElementById('add-product-content');
             const arrangeContent = document.getElementById('arrange-content');
             const settingsContent = document.getElementById('settings-content');
@@ -654,8 +634,6 @@
             const newCategoryInput = document.getElementById('new-category-input');
             const addVariantBtn = document.getElementById('add-variant-btn');
             const variantsContainer = document.getElementById('variants-container');
-            const imageUploadInput = document.getElementById('image-upload-input');
-            const imagePreviewContainer = document.getElementById('image-preview-container');
             const confirmModal = document.getElementById('confirm-modal');
             const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
             const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
@@ -682,6 +660,28 @@
                     return url;
                 }
                 return `${parts[0]}/upload/${transformations}/${parts[1]}`;
+            }
+
+            function updateCardGallery(card, imagesToShow) {
+                const imageEl = card.querySelector('.product-image');
+                const scrollContainer = imageEl.parentElement; 
+                let leftBtn = scrollContainer.querySelector('.scroll-left');
+                let rightBtn = scrollContainer.querySelector('.scroll-right');
+
+                card.dataset.currentImages = JSON.stringify(imagesToShow);
+                card.dataset.currentImageIdx = "0";
+                imageEl.src = transformCloudinaryUrl(imagesToShow[0] || 'https://placehold.co/400x400/ccc/999?text=Image+Not+Found');
+
+                if (leftBtn) leftBtn.remove();
+                if (rightBtn) rightBtn.remove();
+
+                if (imagesToShow.length > 1) {
+                    const buttonsHTML = `
+                        <div class="scroll-btn left scroll-left"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></div>
+                        <div class="scroll-btn right scroll-right"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg></div>
+                    `;
+                    scrollContainer.insertAdjacentHTML('beforeend', buttonsHTML);
+                }
             }
 
             // --- RENDER FUNCTIONS ---
@@ -737,10 +737,10 @@
                         <div class="relative mb-4">
                             <img src="${transformCloudinaryUrl(mainImages[0])}" onerror="this.src='https://placehold.co/400x400/ccc/999?text=Image+Not+Found'" alt="${product.name}" class="w-full aspect-square object-cover rounded-lg">
                              <button class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-product-id="${productId}">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.5l1.318-1.182a4.5 4.5 0 116.364 6.364L12 18.75l-7.682-7.682a4.5 4.5 0 010-6.364z" />
-                                </svg>
-                            </button>
+                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                   <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.5l1.318-1.182a4.5 4.5 0 116.364 6.364L12 18.75l-7.682-7.682a4.5 4.5 0 010-6.364z" />
+                                 </svg>
+                             </button>
                         </div>
                         <h3 class="text-lg font-semibold text-gray-800 mb-2 flex-grow">${product.name}</h3>
                         <div class="flex items-center justify-between mb-3">
@@ -778,6 +778,8 @@
             function updateCartDisplay() {
                 let totalQuantity = 0;
                 let totalPrice = 0;
+                const hasItems = Object.keys(cart).length > 0;
+
                 for (const cartKey in cart) {
                     const item = cart[cartKey];
                     totalQuantity += item.quantity;
@@ -787,6 +789,10 @@
                 cartQuantityText.textContent = totalQuantity;
                 cartTotalEl.textContent = `₹${totalPrice.toFixed(2)}`;
                 modalCartTotal.textContent = `₹${totalPrice.toFixed(2)}`;
+                
+                orderNowBtn.disabled = !hasItems;
+                clearCartBtn.disabled = !hasItems;
+
                 renderCartModal();
 
                 cartQuantityBubble.classList.add('cart-bubble');
@@ -848,14 +854,9 @@
                             <div class="flex-1 ml-4">
                                 <p class="font-semibold">${product.name}</p>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <button class="add-to-cart-from-wishlist-btn text-green-500 hover:text-green-700 p-1" data-product-id="${product._id}" title="Move to Cart">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                                </button>
-                                <button class="remove-wishlist-item-btn text-gray-400 hover:text-red-500 p-1" data-product-id="${product._id}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                </button>
-                            </div>
+                            <button class="remove-wishlist-item-btn text-gray-400 hover:text-red-500 p-1 ml-3" data-product-id="${product._id}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            </button>
                         </div>`;
                 }).join('');
             }
@@ -1038,7 +1039,7 @@
                     totalPrice += itemTotal;
                 });
                 message += "---------------------------------\n"; message += `*Total Amount: ₹${totalPrice.toFixed(2)}*`;
-                const phoneNumber = "916262120120";
+                const phoneNumber = StoreSettings.WHATSAPP_NUMBER;
                 const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
                 window.open(whatsappUrl, '_blank');
             }
@@ -1047,6 +1048,12 @@
             closeCartModalBtn.addEventListener('click', () => hideModal(cartModal));
             cartModal.addEventListener('click', (e) => { if (e.target === cartModal) hideModal(cartModal); });
             orderNowBtn.addEventListener('click', handleOrderNow);
+            clearCartBtn.addEventListener('click', () => {
+                if (Object.keys(cart).length > 0) {
+                    cart = {};
+                    updateCartDisplay();
+                }
+            });
             
             cartItemsContainer.addEventListener('click', (e) => {
                 const removeBtn = e.target.closest('.remove-cart-item-btn');
@@ -1091,38 +1098,10 @@
             wishlistIconBtn.addEventListener('click', () => showModal(wishlistModal));
             closeWishlistModalBtn.addEventListener('click', () => hideModal(wishlistModal));
             wishlistModal.addEventListener('click', (e) => { if(e.target === wishlistModal) hideModal(wishlistModal) });
-            
             wishlistItemsContainer.addEventListener('click', (e) => {
                 const removeBtn = e.target.closest('.remove-wishlist-item-btn');
-                const addBtn = e.target.closest('.add-to-cart-from-wishlist-btn');
-                
-                if (removeBtn) {
+                if(removeBtn) {
                     toggleWishlist(removeBtn.dataset.productId);
-                } else if (addBtn) {
-                    const productId = addBtn.dataset.productId;
-                    const allProducts = Object.values(productsData).flat();
-                    const product = allProducts.find(p => p._id === productId);
-                    if (product) {
-                        if (product.variants && product.variants.length > 0) {
-                            const defaultVariant = product.variants[0];
-                            const cartKey = `${productId}-${defaultVariant.size}`;
-                            if (cart[cartKey]) {
-                                cart[cartKey].quantity += 1;
-                            } else {
-                                cart[cartKey] = { productId: product._id, name: product.name, size: defaultVariant.size, price: defaultVariant.price, quantity: 1 };
-                            }
-                        } else {
-                            const cartKey = `${productId}`;
-                             if (cart[cartKey]) {
-                                cart[cartKey].quantity += 1;
-                            } else {
-                                cart[cartKey] = { productId: product._id, name: product.name, price: product.price, quantity: 1 };
-                            }
-                        }
-                        toggleWishlist(productId);
-                        updateCartDisplay();
-                        showInfoModal(`${product.name} moved to cart!`);
-                    }
                 }
             });
 
@@ -1202,8 +1181,6 @@
                 addProductForm.reset();
                 productIdInput.value = '';
                 variantsContainer.innerHTML = '';
-                imagePreviewContainer.innerHTML = '';
-                newProductImageFiles = [];
                 formTitle.textContent = 'Add New Product';
                 formSubtitle.textContent = 'Fill in the details for the new product.';
                 formSubmitBtn.textContent = 'Save Product';
@@ -1229,14 +1206,23 @@
                 renderCategoryArrangementList();
             });
             
-            function renderAdminProductList() {
-                 let html = '';
-                for (const category of categories) {
-                    html += `<h3 class="text-xl font-semibold text-gray-700 mt-6 mb-4 pb-2 border-b">${category.name}</h3>`;
-                    const productsInCategory = productsData[category.name] || [];
-                    if (productsInCategory.length === 0) {
-                        html += `<p class="text-gray-500">No products in this category.</p>`;
-                    } else {
+            adminProductSearch.addEventListener('keyup', () => {
+                const searchTerm = adminProductSearch.value.trim().toLowerCase();
+                renderAdminProductList(searchTerm);
+            });
+
+            function renderAdminProductList(searchTerm = '') {
+                let html = '';
+                let productsFound = false;
+                categories.forEach(category => {
+                    let productsInCategory = productsData[category.name] || [];
+                    if (searchTerm) {
+                        productsInCategory = productsInCategory.filter(p => p.name.toLowerCase().includes(searchTerm));
+                    }
+
+                    if (productsInCategory.length > 0) {
+                        productsFound = true;
+                        html += `<h3 class="text-xl font-semibold text-gray-700 mt-6 mb-4 pb-2 border-b">${category.name}</h3>`;
                         html += `<div class="space-y-4">`;
                         productsInCategory.forEach(product => {
                             html += `
@@ -1255,9 +1241,15 @@
                         });
                         html += `</div>`;
                     }
+                });
+
+                if (!productsFound) {
+                    html = `<p class="text-gray-500 text-center mt-4">No products found matching your search.</p>`;
                 }
-                manageProductsContent.innerHTML = html;
+
+                adminProductListContainer.innerHTML = html;
             }
+
             
             function populateEditForm(product) {
                 resetProductForm();
@@ -1273,9 +1265,6 @@
                 
                 populateCategorySelect();
                 categorySelect.value = product.category;
-                
-                const existingImages = (product.images || [product.img] || []).filter(Boolean);
-                imagePreviewContainer.innerHTML = existingImages.map(imgUrl => createImagePreview(imgUrl, null)).join('');
 
                 if (product.variants && product.variants.length > 0) {
                     product.variants.forEach(variant => addVariantInput(variant));
@@ -1317,7 +1306,7 @@
             confirmDeleteBtn.addEventListener('click', async (e) => {
                 const { productId } = e.target.dataset;
                 try {
-                    const response = await fetch(`${API_URL}/products/${productId}`, {
+                    const response = await fetch(`${StoreSettings.API_URL}/products/${productId}`, {
                         method: 'DELETE'
                     });
                     if (!response.ok) {
@@ -1340,32 +1329,18 @@
             }
 
             function addVariantInput(variant = {}) {
-                const { size = '', price = '', images = [] } = variant;
-                const imageList = images.length > 0 ? images : (variant.image ? [variant.image] : []);
-
-                const uniqueId = `variant-input-${Date.now()}-${Math.random()}`;
+                const { size = '', price = '' } = variant;
                 const variantDiv = document.createElement('div');
-                variantDiv.className = 'variant-row-wrapper border-t pt-4';
+                variantDiv.className = 'variant-row-wrapper border-t pt-4 grid grid-cols-10 gap-2 items-center';
                 variantDiv.innerHTML = `
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" placeholder="Size (e.g., 1 Lt)" class="variant-size col-span-1 border-gray-300 rounded-md shadow-sm sm:text-sm" value="${size}" required>
-                        <input type="number" placeholder="Price" step="0.01" class="variant-price col-span-1 border-gray-300 rounded-md shadow-sm sm:text-sm" value="${price}" required>
+                    <div class="col-span-4">
+                        <input type="text" placeholder="Size (e.g., 1 Lt)" class="variant-size w-full border-gray-300 rounded-md shadow-sm sm:text-sm" value="${size}" required>
                     </div>
-                     <div class="flex items-center justify-end">
-                          <button type="button" class="remove-variant-btn text-red-500 p-1 rounded-full hover:bg-red-100 font-bold text-xl flex-shrink-0">&times;</button>
-                     </div>
-                    <div class="mt-2 pl-1">
-                        <label class="block text-xs font-medium text-gray-600 mb-2">Variant Images</label>
-                        <div class="variant-image-preview-container mt-2 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
-                           ${imageList.map(imgUrl => createImagePreview(imgUrl, null)).join('')}
-                        </div>
-                        <div class="mt-2">
-                            <input type="file" id="${uniqueId}" multiple class="hidden-file-input variant-image-input" accept="image/png, image/jpeg">
-                            <label for="${uniqueId}" class="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
-                                Add Images
-                            </label>
-                        </div>
+                    <div class="col-span-4">
+                        <input type="number" placeholder="Price" step="0.01" class="variant-price w-full border-gray-300 rounded-md shadow-sm sm:text-sm" value="${price}" required>
+                    </div>
+                    <div class="col-span-2 flex justify-end">
+                        <button type="button" class="remove-variant-btn text-red-500 p-1 rounded-full hover:bg-red-100 font-bold text-xl flex-shrink-0">&times;</button>
                     </div>
                 `;
                 variantsContainer.appendChild(variantDiv);
@@ -1377,65 +1352,6 @@
                 if (e.target.classList.contains('remove-variant-btn')) {
                     e.target.closest('.variant-row-wrapper').remove();
                 }
-                if (e.target.classList.contains('image-delete-btn')) {
-                    e.target.closest('.relative').remove();
-                }
-            });
-            
-            variantsContainer.addEventListener('change', e => {
-                if (e.target.classList.contains('variant-image-input')) {
-                    const files = e.target.files;
-                    const previewContainer = e.target.closest('.variant-row-wrapper').querySelector('.variant-image-preview-container');
-                    
-                    Array.from(files).forEach(file => {
-                        const reader = new FileReader();
-                        reader.onload = (event) => {
-                            const newPreview = document.createElement('div');
-                            newPreview.className = 'relative new-variant-image';
-                            newPreview.innerHTML = createImagePreview(event.target.result, '');
-                            newPreview.querySelector('img').file = file;
-                            previewContainer.appendChild(newPreview);
-                        }
-                        reader.readAsDataURL(file);
-                    });
-                    e.target.value = ''; // Clear input
-                }
-            });
-
-            function createImagePreview(imageDataUrl, fileId) {
-                const idAttribute = fileId ? `data-file-id="${fileId}"` : '';
-                return `
-                    <div class="relative" ${idAttribute}>
-                        <img src="${imageDataUrl}" class="w-full h-24 object-cover rounded-md">
-                        <button type="button" class="image-delete-btn">&times;</button>
-                    </div>`;
-            }
-
-            imageUploadInput.addEventListener('change', (e) => {
-                const files = e.target.files;
-                Array.from(files).forEach(file => {
-                    const fileId = `file-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-                    file.id = fileId;
-                    newProductImageFiles.push(file);
-
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        imagePreviewContainer.insertAdjacentHTML('beforeend', createImagePreview(event.target.result, fileId));
-                    }
-                    reader.readAsDataURL(file);
-                });
-                imageUploadInput.value = '';
-            });
-
-            imagePreviewContainer.addEventListener('click', e => {
-                 if (e.target.classList.contains('image-delete-btn')) {
-                    const previewWrapper = e.target.closest('.relative');
-                    const fileIdToRemove = previewWrapper.dataset.fileId;
-                    if (fileIdToRemove) {
-                        newProductImageFiles = newProductImageFiles.filter(file => file.id !== fileIdToRemove);
-                    }
-                    previewWrapper.remove();
-                }
             });
 
             addProductForm.addEventListener('submit', async (e) => {
@@ -1444,7 +1360,6 @@
                 formSubmitButton.disabled = true;
                 formSubmitButton.textContent = 'Saving...';
 
-                const formData = new FormData();
                 const editingProductId = productIdInput.value;
                 const name = document.getElementById('product-name').value;
                 let category = categorySelect.value || newCategoryInput.value.trim();
@@ -1456,42 +1371,25 @@
                     return;
                 }
 
-                formData.append('name', name);
-                formData.append('category', category);
-                formData.append('description', document.getElementById('product-description').value);
-
-                for (const file of newProductImageFiles) {
-                    formData.append('images', file);
-                }
-                
-                const existingMainImages = Array.from(imagePreviewContainer.querySelectorAll('img'))
-                    .map(img => img.src)
-                    .filter(src => src.startsWith('http'));
-                formData.append('existingImages', JSON.stringify(existingMainImages));
+                const payload = {
+                    name: name,
+                    category: category,
+                    description: document.getElementById('product-description').value,
+                };
 
                 const variants = [];
                 const variantRows = document.querySelectorAll('#variants-container .variant-row-wrapper');
-                variantRows.forEach((row, index) => {
+                variantRows.forEach(row => {
                     const size = row.querySelector('.variant-size').value;
                     const price = parseFloat(row.querySelector('.variant-price').value);
 
                     if (size && !isNaN(price)) {
-                        const existingVariantImages = Array.from(row.querySelectorAll('.variant-image-preview-container img'))
-                            .map(img => img.src)
-                            .filter(src => src.startsWith('http'));
-
-                        variants.push({ size, price, images: existingVariantImages });
-
-                        row.querySelectorAll('.new-variant-image img').forEach(imgEl => {
-                            if (imgEl.file) {
-                                formData.append(`variant_images_${index}`, imgEl.file);
-                            }
-                        });
+                        variants.push({ size, price });
                     }
                 });
 
                 if (variants.length > 0) {
-                    formData.append('variants', JSON.stringify(variants));
+                    payload.variants = variants;
                 } else {
                     const price = parseFloat(document.getElementById('product-price').value);
                     if (isNaN(price)) {
@@ -1500,15 +1398,19 @@
                         formSubmitButton.textContent = 'Save Product';
                         return;
                     }
-                    formData.append('price', price);
+                    payload.price = price;
                 }
 
                 const isEditing = !!editingProductId;
-                const url = isEditing ? `${API_URL}/products/${editingProductId}` : `${API_URL}/products`;
+                const url = isEditing ? `${StoreSettings.API_URL}/products/${editingProductId}` : `${StoreSettings.API_URL}/products`;
                 const method = isEditing ? 'PUT' : 'POST';
 
                 try {
-                    const response = await fetch(url, { method: method, body: formData });
+                    const response = await fetch(url, { 
+                        method: method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
                     if (!response.ok) {
                         const errData = await response.json().catch(() => ({}));
                         throw new Error(errData.message || `HTTP error! status: ${response.status}`);
@@ -1603,7 +1505,7 @@
                 const orderedCategoryIds = orderedCategoryNodes.map(node => node.dataset.categoryId);
                 
                 try {
-                    const response = await fetch(`${API_URL}/categories/order`, {
+                    const response = await fetch(`${StoreSettings.API_URL}/categories/order`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ orderedCategories: orderedCategoryIds })
@@ -1635,12 +1537,12 @@
 
                 try {
                     const [productsResponse, categoriesResponse] = await Promise.all([
-                        fetch(`${API_URL}/products`),
-                        fetch(`${API_URL}/categories`)
+                        fetch(`${StoreSettings.API_URL}/products`),
+                        fetch(`${StoreSettings.API_URL}/categories`)
                     ]);
 
                     if (!productsResponse.ok || !categoriesResponse.ok) {
-                         throw new Error(`HTTP error!`);
+                         throw new Error(`HTTP error! Could not fetch data.`);
                     }
 
                     const flatProductList = await productsResponse.json();
@@ -1671,7 +1573,7 @@
 
                 updateCartDisplay(); 
                 updateWishlistDisplay();
-                document.getElementById('footer-text').innerHTML = `&copy; ${new Date().getFullYear()} Guru Sampoorna. All rights reserved.`;
+                document.getElementById('footer-text').innerHTML = `&copy; ${new Date().getFullYear()} ${StoreSettings.STORE_NAME}. All rights reserved.`;
                 
                 renderCategories();
                 
