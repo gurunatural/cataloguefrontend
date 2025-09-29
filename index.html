@@ -271,8 +271,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
                         <span id="cart-quantity-bubble" class="absolute -top-2 -left-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
-                        <div class="text-gray-700 text-sm hidden sm:block">
-                            <span id="cart-quantity-text">0</span> items | 
+                        <div class="text-gray-700 text-sm">
+                            <span class="hidden sm:inline"><span id="cart-quantity-text">0</span> items | </span>
                             <span id="cart-total" class="font-bold">₹0.00</span>
                         </div>
                     </button>
@@ -1227,13 +1227,10 @@
                         productsInCategory.forEach(product => {
                             html += `
                                 <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
-                                    <div class="flex items-start gap-4 flex-1">
-                                        <img src="${transformCloudinaryUrl((product.variants && product.variants.length > 0 ? (product.variants[0].images?.[0] || product.variants[0].image) : (product.images?.[0] || product.img)), 'w_100,q_auto,f_auto')}"  class="w-16 h-16 object-cover rounded-md">
-                                        <div>
-                                            <p class="font-bold text-gray-800">${product.name}</p>
-                                        </div>
+                                    <div class="flex-1">
+                                        <p class="font-bold text-gray-800">${product.name}</p>
                                     </div>
-                                    <div class="flex gap-2 items-center">
+                                    <div class="flex gap-2 items-center flex-shrink-0">
                                         <button class="edit-product-btn text-blue-500 hover:text-blue-700 font-semibold text-sm" data-product-id="${product._id}">Edit</button>
                                         <button class="delete-product-btn text-red-500 hover:text-red-700 font-semibold text-sm" data-product-id="${product._id}" data-product-name="${product.name}">Remove</button>
                                     </div>
@@ -1360,6 +1357,8 @@
                 formSubmitButton.disabled = true;
                 formSubmitButton.textContent = 'Saving...';
 
+                // We send as FormData because the backend is likely expecting it,
+                // even though we aren't sending files anymore.
                 const formData = new FormData();
                 const editingProductId = productIdInput.value;
                 const name = document.getElementById('product-name').value;
@@ -1407,7 +1406,7 @@
                 try {
                     const response = await fetch(url, { 
                         method: method,
-                        body: formData
+                        body: formData // Sending as FormData
                     });
                     if (!response.ok) {
                         const errData = await response.json().catch(() => ({}));
