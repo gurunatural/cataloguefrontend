@@ -271,10 +271,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
                         <span id="cart-quantity-bubble" class="absolute -top-2 -left-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
-                        <div class="text-gray-700 text-sm">
-                            <span class="hidden sm:inline"><span id="cart-quantity-text">0</span> items | </span>
-                            <span id="cart-total" class="font-bold">₹0.00</span>
-                        </div>
+                        <span class="text-gray-700 text-sm hidden sm:inline"><span id="cart-quantity-text">0</span> items | </span>
+                        <span id="cart-total" class="font-bold text-gray-700 text-sm">₹0.00</span>
                     </button>
                 </div>
             </nav>
@@ -366,9 +364,8 @@
                 </button>
             </div>
             <div class="p-6">
-                <div class="flex flex-col md:flex-row gap-6">
-                    <img id="details-modal-img" src="" alt="Product Image" class="w-full md:w-1/2 rounded-lg object-cover">
-                    <div class="w-full md:w-1/2">
+                <div>
+                    <div>
                         <p id="details-modal-desc" class="text-gray-600 text-sm leading-relaxed"></p>
                     </div>
                 </div>
@@ -602,7 +599,6 @@
             const detailsModal = document.getElementById('details-modal');
             const closeDetailsModalBtn = document.getElementById('close-details-modal-btn');
             const detailsModalTitle = document.getElementById('details-modal-title');
-            const detailsModalImg = document.getElementById('details-modal-img');
             const detailsModalDesc = document.getElementById('details-modal-desc');
 
             const adminPage = document.getElementById('admin-page');
@@ -662,60 +658,28 @@
                 return `${parts[0]}/upload/${transformations}/${parts[1]}`;
             }
 
-            function updateCardGallery(card, imagesToShow) {
-                const imageEl = card.querySelector('.product-image');
-                const scrollContainer = imageEl.parentElement; 
-                let leftBtn = scrollContainer.querySelector('.scroll-left');
-                let rightBtn = scrollContainer.querySelector('.scroll-right');
-
-                card.dataset.currentImages = JSON.stringify(imagesToShow);
-                card.dataset.currentImageIdx = "0";
-                imageEl.src = transformCloudinaryUrl(imagesToShow[0] || 'https://placehold.co/400x400/ccc/999?text=Image+Not+Found');
-
-                if (leftBtn) leftBtn.remove();
-                if (rightBtn) rightBtn.remove();
-
-                if (imagesToShow.length > 1) {
-                    const buttonsHTML = `
-                        <div class="scroll-btn left scroll-left"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></div>
-                        <div class="scroll-btn right scroll-right"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg></div>
-                    `;
-                    scrollContainer.insertAdjacentHTML('beforeend', buttonsHTML);
-                }
-            }
-
             // --- RENDER FUNCTIONS ---
             function renderProductCard(product) {
                 const productId = product._id;
-                const mainImages = product.images || [product.img].filter(Boolean);
                 const isWishlisted = wishlist.includes(productId);
 
                 let cartButtonHTML = `<button class="add-to-cart-btn w-full text-white font-bold py-2 px-4 rounded-full mt-auto">Add to Cart</button>`;
 
-                if (product.variants && product.variants.length > 0) {
-                    const firstVariant = product.variants[0];
-                    const initialImages = (firstVariant.images && firstVariant.images.length > 0) ? firstVariant.images : mainImages;
-                    const initialImage = initialImages[0] || 'https://placehold.co/400x400/ccc/999?text=Image+Not+Found';
+                let wishlistButtonHTML = `
+                    <button class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-product-id="${productId}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.5l1.318-1.182a4.5 4.5 0 116.364 6.364L12 18.75l-7.682-7.682a4.5 4.5 0 010-6.364z" />
+                        </svg>
+                    </button>`;
 
+                if (product.variants && product.variants.length > 0) {
                     return `
-                        <div class="product-card p-5 flex flex-col" data-product-id="${productId}" data-main-images='${JSON.stringify(mainImages)}' data-current-images='${JSON.stringify(initialImages)}' data-current-image-idx="0">
-                            <div class="relative mb-4">
-                                <img src="${transformCloudinaryUrl(initialImage)}" onerror="this.src='https://placehold.co/400x400/ccc/999?text=Image+Not+Found'" alt="${product.name}" class="product-image w-full aspect-square object-cover rounded-lg">
-                                <button class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-product-id="${productId}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.5l1.318-1.182a4.5 4.5 0 116.364 6.364L12 18.75l-7.682-7.682a4.5 4.5 0 010-6.364z" />
-                                    </svg>
-                                </button>
-                                ${initialImages.length > 1 ? `
-                                    <div class="scroll-btn left scroll-left"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></div>
-                                    <div class="scroll-btn right scroll-right"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg></div>
-                                ` : ''}
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2 flex-grow">${product.name}</h3>
+                        <div class="product-card p-5 flex flex-col relative" data-product-id="${productId}">
+                            ${wishlistButtonHTML}
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2 flex-grow mt-8">${product.name}</h3>
                             <div class="variant-container flex flex-wrap items-center gap-2 mb-3">
                                 ${product.variants.map((variant, index) => {
-                                    const variantImages = (variant.images && variant.images.length > 0) ? variant.images : [];
-                                    return `<button class="variant-btn px-3 py-1 text-xs rounded-md ${index === 0 ? 'active' : ''}" data-price="${variant.price}" data-size="${variant.size}" data-variant-images='${JSON.stringify(variantImages)}'>${variant.size}</button>`;
+                                    return `<button class="variant-btn px-3 py-1 text-xs rounded-md ${index === 0 ? 'active' : ''}" data-price="${variant.price}" data-size="${variant.size}">${variant.size}</button>`;
                                 }).join('')}
                             </div>
                             <div class="flex items-center justify-between mb-3">
@@ -733,16 +697,9 @@
                         </div>`;
                 }
                 return `
-                    <div class="product-card p-5 flex flex-col" data-product-id="${productId}">
-                        <div class="relative mb-4">
-                            <img src="${transformCloudinaryUrl(mainImages[0])}" onerror="this.src='https://placehold.co/400x400/ccc/999?text=Image+Not+Found'" alt="${product.name}" class="w-full aspect-square object-cover rounded-lg">
-                             <button class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-product-id="${productId}">
-                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                   <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.5l1.318-1.182a4.5 4.5 0 116.364 6.364L12 18.75l-7.682-7.682a4.5 4.5 0 010-6.364z" />
-                                 </svg>
-                             </button>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2 flex-grow">${product.name}</h3>
+                    <div class="product-card p-5 flex flex-col relative" data-product-id="${productId}">
+                        ${wishlistButtonHTML}
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2 flex-grow mt-8">${product.name}</h3>
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center border border-gray-200 rounded-full">
                                 <button class="quantity-btn minus-btn p-2 rounded-l-full">-</button>
@@ -847,11 +804,9 @@
                 wishlistItemsContainer.innerHTML = wishlist.map(productId => {
                     const product = allProducts.find(p => p._id === productId);
                     if (!product) return '';
-                    const image = (product.images && product.images.length > 0) ? product.images[0] : product.img;
                     return `
                         <div class="flex items-center justify-between py-3 border-b last:border-b-0">
-                             <img src="${transformCloudinaryUrl(image, 'w_100,q_auto,f_auto')}" class="w-16 h-16 object-cover rounded-md">
-                            <div class="flex-1 ml-4">
+                            <div class="flex-1">
                                 <p class="font-semibold">${product.name}</p>
                             </div>
                             <button class="remove-wishlist-item-btn text-gray-400 hover:text-red-500 p-1 ml-3" data-product-id="${product._id}">
@@ -920,20 +875,6 @@
                     const newPrice = parseFloat(target.dataset.price);
                     quantityInput.value = 1;
                     priceEl.textContent = `₹${newPrice.toFixed(2)}`;
-                    
-                    const mainImages = JSON.parse(card.dataset.mainImages || '[]');
-                    const variantImages = JSON.parse(target.dataset.variantImages || '[]');
-                    const imagesToShow = (variantImages && variantImages.length > 0) ? variantImages : mainImages;
-                    updateCardGallery(card, imagesToShow);
-                } else if (target.closest('.scroll-left') || target.closest('.scroll-right')) {
-                    let currentIdx = parseInt(card.dataset.currentImageIdx);
-                    const isLeft = target.closest('.scroll-left');
-                    const currentImages = JSON.parse(card.dataset.currentImages);
-                    const imageCount = currentImages.length;
-                    if (imageCount === 0) return;
-                    currentIdx = isLeft ? (currentIdx - 1 + imageCount) % imageCount : (currentIdx + 1) % imageCount;
-                    card.querySelector('.product-image').src = transformCloudinaryUrl(currentImages[currentIdx]);
-                    card.dataset.currentImageIdx = currentIdx;
                 }
             });
 
@@ -1107,9 +1048,7 @@
 
             // --- DETAILS MODAL ---
             function showDetailsModal(product) {
-                const image = (product.images && product.images.length > 0) ? product.images[0] : product.img;
                 detailsModalTitle.textContent = product.name;
-                detailsModalImg.src = transformCloudinaryUrl(image, 'w_600,q_auto,f_auto') || 'https://placehold.co/400x400/ccc/999?text=Image+Not+Found';
                 detailsModalDesc.textContent = product.description || 'No description available.';
                 showModal(detailsModal);
             }
