@@ -364,8 +364,9 @@
                 </button>
             </div>
             <div class="p-6">
-                <div>
-                    <div>
+                <div class="flex flex-col md:flex-row gap-6">
+                    <img id="details-modal-img" src="" alt="Product Image" class="w-full md:w-1/2 rounded-lg object-cover">
+                    <div class="w-full md:w-1/2">
                         <p id="details-modal-desc" class="text-gray-600 text-sm leading-relaxed"></p>
                     </div>
                 </div>
@@ -429,6 +430,10 @@
                             <div>
                                 <label for="product-name" class="block text-sm font-medium text-gray-700">Product Name</label>
                                 <input type="text" name="name" id="product-name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm sm:text-sm">
+                            </div>
+                             <div>
+                                <label for="product-image-url" class="block text-sm font-medium text-gray-700">Main Image URL</label>
+                                <input type="text" name="imageUrl" id="product-image-url" placeholder="Paste image URL here" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm sm:text-sm">
                             </div>
                             <div>
                                 <label for="product-description" class="block text-sm font-medium text-gray-700">Description</label>
@@ -599,6 +604,7 @@
             const detailsModal = document.getElementById('details-modal');
             const closeDetailsModalBtn = document.getElementById('close-details-modal-btn');
             const detailsModalTitle = document.getElementById('details-modal-title');
+            const detailsModalImg = document.getElementById('details-modal-img');
             const detailsModalDesc = document.getElementById('details-modal-desc');
 
             const adminPage = document.getElementById('admin-page');
@@ -661,25 +667,29 @@
             // --- RENDER FUNCTIONS ---
             function renderProductCard(product) {
                 const productId = product._id;
+                const mainImage = product.img || (product.images && product.images[0]);
                 const isWishlisted = wishlist.includes(productId);
 
                 let cartButtonHTML = `<button class="add-to-cart-btn w-full text-white font-bold py-2 px-4 rounded-full mt-auto">Add to Cart</button>`;
 
-                let wishlistButtonHTML = `
-                    <button class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-product-id="${productId}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.5l1.318-1.182a4.5 4.5 0 116.364 6.364L12 18.75l-7.682-7.682a4.5 4.5 0 010-6.364z" />
-                        </svg>
-                    </button>`;
-
                 if (product.variants && product.variants.length > 0) {
+                    const firstVariant = product.variants[0];
+                    const initialImage = firstVariant.image || mainImage;
+
                     return `
-                        <div class="product-card p-5 flex flex-col relative" data-product-id="${productId}">
-                            ${wishlistButtonHTML}
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2 flex-grow mt-8">${product.name}</h3>
+                        <div class="product-card p-5 flex flex-col" data-product-id="${productId}" data-main-image='${mainImage || ''}'>
+                            <div class="relative mb-4">
+                                <img src="${transformCloudinaryUrl(initialImage)}" onerror="this.src='https://placehold.co/400x400/ccc/999?text=Image+Not+Found'" alt="${product.name}" class="product-image w-full aspect-square object-cover rounded-lg">
+                                <button class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-product-id="${productId}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.5l1.318-1.182a4.5 4.5 0 116.364 6.364L12 18.75l-7.682-7.682a4.5 4.5 0 010-6.364z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2 flex-grow">${product.name}</h3>
                             <div class="variant-container flex flex-wrap items-center gap-2 mb-3">
                                 ${product.variants.map((variant, index) => {
-                                    return `<button class="variant-btn px-3 py-1 text-xs rounded-md ${index === 0 ? 'active' : ''}" data-price="${variant.price}" data-size="${variant.size}">${variant.size}</button>`;
+                                    return `<button class="variant-btn px-3 py-1 text-xs rounded-md ${index === 0 ? 'active' : ''}" data-price="${variant.price}" data-size="${variant.size}" data-image="${variant.image || ''}">${variant.size}</button>`;
                                 }).join('')}
                             </div>
                             <div class="flex items-center justify-between mb-3">
@@ -697,9 +707,16 @@
                         </div>`;
                 }
                 return `
-                    <div class="product-card p-5 flex flex-col relative" data-product-id="${productId}">
-                        ${wishlistButtonHTML}
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2 flex-grow mt-8">${product.name}</h3>
+                    <div class="product-card p-5 flex flex-col" data-product-id="${productId}">
+                        <div class="relative mb-4">
+                            <img src="${transformCloudinaryUrl(mainImage)}" onerror="this.src='https://placehold.co/400x400/ccc/999?text=Image+Not+Found'" alt="${product.name}" class="w-full aspect-square object-cover rounded-lg">
+                             <button class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-product-id="${productId}">
+                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                   <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.5l1.318-1.182a4.5 4.5 0 116.364 6.364L12 18.75l-7.682-7.682a4.5 4.5 0 010-6.364z" />
+                                 </svg>
+                             </button>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2 flex-grow">${product.name}</h3>
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center border border-gray-200 rounded-full">
                                 <button class="quantity-btn minus-btn p-2 rounded-l-full">-</button>
@@ -804,9 +821,11 @@
                 wishlistItemsContainer.innerHTML = wishlist.map(productId => {
                     const product = allProducts.find(p => p._id === productId);
                     if (!product) return '';
+                    const image = product.img || (product.images && product.images[0]);
                     return `
                         <div class="flex items-center justify-between py-3 border-b last:border-b-0">
-                            <div class="flex-1">
+                             <img src="${transformCloudinaryUrl(image, 'w_100,q_auto,f_auto')}" class="w-16 h-16 object-cover rounded-md">
+                            <div class="flex-1 ml-4">
                                 <p class="font-semibold">${product.name}</p>
                             </div>
                             <button class="remove-wishlist-item-btn text-gray-400 hover:text-red-500 p-1 ml-3" data-product-id="${product._id}">
@@ -870,11 +889,17 @@
                 } else if (target.classList.contains('variant-btn')) {
                     const quantityInput = card.querySelector('.quantity-input');
                     const priceEl = card.querySelector('.product-price');
+                    const imageEl = card.querySelector('.product-image');
+                    const mainImage = card.dataset.mainImage;
+
                     card.querySelectorAll('.variant-btn').forEach(btn => btn.classList.remove('active'));
                     target.classList.add('active');
                     const newPrice = parseFloat(target.dataset.price);
+                    const newImage = target.dataset.image;
+
                     quantityInput.value = 1;
                     priceEl.textContent = `₹${newPrice.toFixed(2)}`;
+                    imageEl.src = transformCloudinaryUrl(newImage || mainImage);
                 }
             });
 
@@ -1048,7 +1073,9 @@
 
             // --- DETAILS MODAL ---
             function showDetailsModal(product) {
+                const image = product.img || (product.images && product.images[0]);
                 detailsModalTitle.textContent = product.name;
+                detailsModalImg.src = transformCloudinaryUrl(image, 'w_600,q_auto,f_auto');
                 detailsModalDesc.textContent = product.description || 'No description available.';
                 showModal(detailsModal);
             }
@@ -1166,8 +1193,11 @@
                         productsInCategory.forEach(product => {
                             html += `
                                 <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
-                                    <div class="flex-1">
-                                        <p class="font-bold text-gray-800">${product.name}</p>
+                                    <div class="flex items-start gap-4 flex-1">
+                                        <img src="${transformCloudinaryUrl((product.img || (product.variants && product.variants.length > 0 ? product.variants[0].image : '')), 'w_100,q_auto,f_auto')}"  class="w-16 h-16 object-cover rounded-md">
+                                        <div>
+                                            <p class="font-bold text-gray-800">${product.name}</p>
+                                        </div>
                                     </div>
                                     <div class="flex gap-2 items-center flex-shrink-0">
                                         <button class="edit-product-btn text-blue-500 hover:text-blue-700 font-semibold text-sm" data-product-id="${product._id}">Edit</button>
@@ -1198,6 +1228,7 @@
                 productIdInput.value = product._id;
                 document.getElementById('product-name').value = product.name;
                 document.getElementById('product-description').value = product.description || '';
+                document.getElementById('product-image-url').value = product.img || '';
                 
                 populateCategorySelect();
                 categorySelect.value = product.category;
@@ -1265,17 +1296,20 @@
             }
 
             function addVariantInput(variant = {}) {
-                const { size = '', price = '' } = variant;
+                const { size = '', price = '', image = '' } = variant;
                 const variantDiv = document.createElement('div');
                 variantDiv.className = 'variant-row-wrapper border-t pt-4 grid grid-cols-10 gap-2 items-center';
                 variantDiv.innerHTML = `
-                    <div class="col-span-4">
+                    <div class="col-span-3">
                         <input type="text" placeholder="Size (e.g., 1 Lt)" class="variant-size w-full border-gray-300 rounded-md shadow-sm sm:text-sm" value="${size}" required>
                     </div>
-                    <div class="col-span-4">
+                    <div class="col-span-3">
                         <input type="number" placeholder="Price" step="0.01" class="variant-price w-full border-gray-300 rounded-md shadow-sm sm:text-sm" value="${price}" required>
                     </div>
-                    <div class="col-span-2 flex justify-end">
+                    <div class="col-span-3">
+                        <input type="text" placeholder="Variant Image URL" class="variant-image w-full border-gray-300 rounded-md shadow-sm sm:text-sm" value="${image}">
+                    </div>
+                    <div class="col-span-1 flex justify-end">
                         <button type="button" class="remove-variant-btn text-red-500 p-1 rounded-full hover:bg-red-100 font-bold text-xl flex-shrink-0">&times;</button>
                     </div>
                 `;
@@ -1296,37 +1330,35 @@
                 formSubmitButton.disabled = true;
                 formSubmitButton.textContent = 'Saving...';
 
-                // We send as FormData because the backend is likely expecting it,
-                // even though we aren't sending files anymore.
-                const formData = new FormData();
-                const editingProductId = productIdInput.value;
-                const name = document.getElementById('product-name').value;
-                let category = categorySelect.value || newCategoryInput.value.trim();
+                const productData = {
+                    name: document.getElementById('product-name').value,
+                    category: categorySelect.value || newCategoryInput.value.trim(),
+                    description: document.getElementById('product-description').value,
+                    img: document.getElementById('product-image-url').value,
+                    variants: [],
+                    price: null
+                };
                 
-                if (!name || !category) {
+                if (!productData.name || !productData.category) {
                     showInfoModal("Product Name and Category are required.");
                     formSubmitButton.disabled = false;
                     formSubmitButton.textContent = 'Save Product';
                     return;
                 }
-                
-                formData.append('name', name);
-                formData.append('category', category);
-                formData.append('description', document.getElementById('product-description').value);
 
-                const variants = [];
                 const variantRows = document.querySelectorAll('#variants-container .variant-row-wrapper');
                 variantRows.forEach(row => {
                     const size = row.querySelector('.variant-size').value;
                     const price = parseFloat(row.querySelector('.variant-price').value);
+                    const image = row.querySelector('.variant-image').value;
 
                     if (size && !isNaN(price)) {
-                        variants.push({ size, price });
+                        productData.variants.push({ size, price, image });
                     }
                 });
 
-                if (variants.length > 0) {
-                    formData.append('variants', JSON.stringify(variants));
+                if (productData.variants.length > 0) {
+                    delete productData.price; // Not needed if there are variants
                 } else {
                     const price = parseFloat(document.getElementById('product-price').value);
                     if (isNaN(price)) {
@@ -1335,17 +1367,21 @@
                         formSubmitButton.textContent = 'Save Product';
                         return;
                     }
-                    formData.append('price', price);
+                    productData.price = price;
+                    delete productData.variants; // Not needed for simple product
                 }
 
-                const isEditing = !!editingProductId;
-                const url = isEditing ? `${StoreSettings.API_URL}/products/${editingProductId}` : `${StoreSettings.API_URL}/products`;
+                const isEditing = !!productIdInput.value;
+                const url = isEditing ? `${StoreSettings.API_URL}/products/${productIdInput.value}` : `${StoreSettings.API_URL}/products`;
                 const method = isEditing ? 'PUT' : 'POST';
 
                 try {
                     const response = await fetch(url, { 
                         method: method,
-                        body: formData // Sending as FormData
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(productData)
                     });
                     if (!response.ok) {
                         const errData = await response.json().catch(() => ({}));
